@@ -1,0 +1,54 @@
+<svg width="660" height="350" viewBox="0 0 660 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="站台 repo 把建置結果推到 han-content 的 gh-pages 由 GitHub Pages 發佈;DuckDNS 新網址的 A 記錄指到 GitHub,舊網址由 VPS 的 nginx 301 轉到新網址">
+<defs>
+<marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,1 L6.5,4 L0,7 z" fill="#3f6b4f"/></marker>
+<marker id="ay" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,1 L6.5,4 L0,7 z" fill="#b98a3e"/></marker>
+</defs>
+<rect x="0" y="0" width="660" height="350" rx="12" fill="#faf9f3"/>
+<g fill="none" stroke="#3f6b4f" stroke-width="1.5">
+<rect x="16" y="44" width="130" height="68" rx="8"/>
+<rect x="262" y="30" width="178" height="98" rx="8"/>
+<rect x="274" y="56" width="154" height="26" rx="5" fill="#f1f0e6"/>
+<rect x="274" y="90" width="154" height="26" rx="5" fill="#dfe9e2"/>
+<rect x="16" y="166" width="130" height="48" rx="8"/>
+<rect x="262" y="160" width="178" height="60" rx="8"/>
+<rect x="16" y="256" width="130" height="48" rx="8"/>
+<rect x="262" y="250" width="178" height="60" rx="8" stroke="#b98a3e"/>
+<rect x="520" y="30" width="124" height="190" rx="10" fill="#3f6b4f"/>
+<line x1="262" y1="69" x2="148" y2="69" marker-end="url(#ag)"/>
+<line x1="148" y1="103" x2="272" y2="103" marker-end="url(#ag)"/>
+<line x1="430" y1="103" x2="518" y2="103" marker-end="url(#ag)"/>
+<line x1="148" y1="190" x2="260" y2="190" marker-end="url(#ag)"/>
+<line x1="442" y1="190" x2="518" y2="190" marker-end="url(#ag)"/>
+<line x1="148" y1="280" x2="260" y2="280" stroke="#b98a3e" marker-end="url(#ay)"/>
+<line x1="351" y1="248" x2="351" y2="222" stroke="#b98a3e" stroke-width="2" marker-end="url(#ay)"/>
+</g>
+<g font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif" fill="#2b2f28" text-anchor="middle">
+<g font-size="12" font-weight="600" fill="#5b6354" text-anchor="start">
+<text x="16" y="22">① 佈署</text>
+<text x="16" y="150">② 新網址</text>
+<text x="16" y="242">③ 舊網址</text>
+</g>
+<text x="81" y="74" font-size="14" font-weight="600">vps-blogger</text>
+<text x="81" y="94" font-size="11" fill="#5b6354">站台 · 私有 repo</text>
+<text x="351" y="48" font-size="13" font-weight="600">han-content(公開)</text>
+<text x="351" y="74" font-size="11.5">main · 文章</text>
+<text x="351" y="108" font-size="11.5">gh-pages · 建置結果</text>
+<g font-size="10.5" fill="#5b6354">
+<text x="204" y="60">repository_dispatch</text>
+<text x="204" y="120">build 後 push</text>
+<text x="474" y="96">發佈</text>
+<text x="204" y="182">查網域</text>
+<text x="481" y="182">指向</text>
+</g>
+<text x="360" y="239" font-size="11" font-weight="600" fill="#b98a3e" text-anchor="start">301 轉新網址</text>
+<text x="81" y="195" font-size="13" font-weight="600">讀者</text>
+<text x="351" y="182" font-size="11" font-family="ui-monospace,Consolas,monospace">han-bloger-page.duckdns.org</text>
+<text x="351" y="204" font-size="11" fill="#5b6354">A → 185.199.108.153(GitHub)</text>
+<text x="81" y="285" font-size="13" font-weight="600">舊連結</text>
+<text x="351" y="272" font-size="11" font-family="ui-monospace,Consolas,monospace">dogdog0999.duckdns.org</text>
+<text x="351" y="294" font-size="11" fill="#5b6354">VPS · nginx</text>
+<text x="582" y="62" font-size="14" font-weight="600" fill="#f1f0e6">GitHub Pages</text>
+<text x="582" y="82" font-size="11" fill="#e7e5d7">從 gh-pages 分支</text>
+<text x="582" y="98" font-size="11" fill="#e7e5d7">提供網站與 HTTPS</text>
+</g>
+</svg>
