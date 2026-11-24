@@ -1,41 +1,36 @@
 ---
-title: 把文章搬出程式碼：push 一篇 .md,它自己上站
+title: 內容 repo 與站台 repo 分離,達成 0 伺服器 & 私有網域 & 部署在 GitHub
 date: 2026-11-25
 category: 架構筆記
-tags: [GitHub Actions, CI/CD, repository_dispatch, 自動化]
+tags: [GitHub Actions, CI/CD, repository_dispatch, GitHub Pages, DuckDNS, 架構]
 badge: CI
-excerpt: 文章跟站台程式本來擠在同一個 repo,想發篇廢文也要開 PR。後來把內容拆出去,push 就自己上站。
+excerpt: 文章與站台拆成兩個 repo,push 一篇 .md 會用 repository_dispatch 觸發建置,結果發佈到 GitHub Pages,不用自己養伺服器。
 ---
 
-這個部落格的程式碼有開 PR 保護,是怕自己半夜手滑把站推壞。
+這個部落格原本是文章跟站台程式放同一個 repo,最後 rsync 到我自己的 VPS。想發一篇廢文也得開分支、等 CI、再 merge。
 
-但文章跟程式本來在同一個 repo,所以我只是想發一篇廢文,也得開分支、等 CI、再 merge。改個錯字也一樣。後來就變得不太想寫了。
+後來我把它改成三塊:一個放文章的 repo、一個放站台的 repo,加上 GitHub Pages。這篇主要在記這個結構,每一塊做什麼、怎麼接起來。
 
-## 先放結果
+## 先看整體
 
-現在我發文章只做一件事:在內容 repo 丟一個 `.md`,然後 push。
+<figure>
+<img src="/bloger/images/github-pages-deploy-dns.svg" alt="站台 repo 把建置結果推到 han-content 的 gh-pages 由 GitHub Pages 發佈;DuckDNS 新網址的 A 記錄指到 GitHub,舊網址由 VPS 的 nginx 301 轉到新網址" />
+<figcaption>建置結果推到 gh-pages 由 Pages 發佈;新網址的 A 記錄指到 GitHub,舊網址留在 VPS 只做 301。</figcaption>
+</figure>
 
-大概半分鐘,站上就有了。Actions 跑完長這樣:
+三塊各管一件事。
 
-```text
-✓ Notify site to deploy        (內容 repo)
-✓ Build & Deploy               (站台:repository_dispatch 觸發)
-  ✓ Build site
-  ✓ Build search index
-  ✓ Publish to GitHub Pages repo
-```
+`han-content`(公開)放文章跟圖,**沒開保護,想改就直接 commit**。它有兩個分支:`main` 是文章,`gh-pages` 是建置好的網站。
 
-這篇就是我 push 上去測的。
+`vps-blogger`(私有)是站台本體:Astro 版型、搜尋、CI。**建置的時候才去把文章 clone 進來**,所以文章不在這個 repo 裡。
 
-## 怎麼接的
+GitHub Pages 從 `han-content` 的 `gh-pages` 提供網站,連 HTTPS 憑證也是它簽。
 
-我把文章拆成另一個 repo,叫 `han-content`,裡面只放文章(`posts/*.md`)和圖,沒開保護,想改就直接 commit。
+## 怎麼串起來
 
-站台 repo 還是原本那個,版型、搜尋、CI 都在這邊,差別是建置的時候才去把文章 clone 進來。
+發文章就一個動作:在 `han-content` 丟一個 `.md`,push 到 `main`。
 
-剩下的問題是:內容 repo 一 push,怎麼讓站台知道?
-
-我用的是 `repository_dispatch`。內容 repo 有個很小的 workflow,push 的時候打一下 GitHub API,送一個自訂事件過去。站台的 `deploy.yml` 多掛一個監聽:
+內容 repo 有個很小的 workflow,push 時打一下 GitHub API,送一個 `repository_dispatch` 事件給站台。站台的 `deploy.yml` 多掛一個監聽:
 
 ```yaml
 on:
@@ -45,22 +40,27 @@ on:
     types: [content-updated]
 ```
 
-收到就開始建置,再把結果發佈出去。說穿了就是 webhook,只是兩邊都在 GitHub 裡。
+收到之後 CI 把文章抓進來、建置、建搜尋索引,最後把結果推到 `han-content` 的 `gh-pages`。說穿了就是 webhook,只是兩邊都在 GitHub 裡。大概半分鐘,Actions 長這樣:
 
-## 順便搬到 GitHub Pages
+```text
+✓ Notify site to deploy        (內容 repo)
+✓ Build & Deploy               (站台:repository_dispatch 觸發)
+  ✓ Build site
+  ✓ Build search index
+  ✓ Publish to GitHub Pages repo
+```
 
-這站原本放在我自己的 VPS,CI 最後用 rsync 丟上去。既然都是靜態檔,後來改放 GitHub Pages,少顧一台機器。
+為什麼結果要推回內容 repo,不直接用站台 repo 發佈?因為免費的 GitHub Pages 要公開的 repo,站台 repo 是私有的,內容 repo 本來就公開,剛好拿來放。
 
-<figure>
-<img src="/bloger/images/github-pages-deploy-dns.svg" alt="站台 repo 把建置結果推到 han-content 的 gh-pages 由 GitHub Pages 發佈;DuckDNS 新網址的 A 記錄指到 GitHub,舊網址由 VPS 的 nginx 301 轉到新網址" />
-<figcaption>建置結果推到 gh-pages 由 Pages 發佈;新網址的 A 記錄指到 GitHub,舊網址留在 VPS 只做 301。</figcaption>
-</figure>
+而且通知 workflow 只看 `main`,推 `gh-pages` 不會再叫醒站台,不會繞成一圈。
 
-有兩個地方要處理。
+## 網域
 
-第一,GitHub Pages 的免費方案只吃公開的 repo,但站台 repo 是私有的。所以我把建好的結果推到 `han-content`(本來就公開)的 `gh-pages` 分支,Pages 從那裡發佈。內容 repo 的通知 workflow 只看 `main`,推 `gh-pages` 不會再叫醒站台,不會繞成一圈。
+網址是我自己的 DuckDNS 網域,不是 `github.io`。
 
-第二,我的網域是 DuckDNS 的,不確定能不能掛上 GitHub Pages。先用一個測試網域試,把 IP 指到 GitHub 提供的位址,結果 DNS 檢查通過,HTTPS 憑證也是 GitHub 自己簽好,所以正式的網域也這樣設。舊網址那邊,我在 nginx 加了一段 301,路徑原樣轉到新站。
+新網址的 A 記錄指到 GitHub Pages 提供的 IP,在 Pages 設定填上這個網域,GitHub 的 DNS 檢查通過就會自動簽 HTTPS。DuckDNS 一個名稱只能填一個 IPv4,我只填了其中一個,實際上夠用。
+
+舊網址還在 VPS 的 nginx 上,我加了一段 301,路徑原樣轉到新網址。等舊連結沒人用了,那台就能關掉。所以「0 伺服器」說的是網站本身,轉址這一段暫時還在。
 
 ## 為什麼不用 submodule
 
@@ -77,7 +77,7 @@ submodule 是 git 內建的功能,可以把另一個 repo 掛進主 repo 的某�
 
 所以就拆成兩個 repo,中間用一個事件接起來。內容那邊隨便我改,程式這邊保護照舊。
 
-缺點也有:要多保管一把 PAT(內容 repo 用它發事件),而且本機要看完整的站,得把兩邊都拉下來。我寫了個 `pull-content` 腳本把文章抓回本機,算是湊合著解掉。
+缺點也有:要多保管一把 PAT(內容 repo 用它發事件)和一把部署金鑰(站台 CI 用它推 `gh-pages`),而且本機要看完整的站,得把兩邊都拉下來。我寫了個 `pull-content` 腳本把文章抓回本機,算是湊合著解掉。
 
 ## 踩到的坑
 
