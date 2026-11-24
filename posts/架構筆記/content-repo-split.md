@@ -43,6 +43,11 @@ excerpt: 文章跟站台程式本來擠在同一個 repo,改個排版要走 PR�
 
 說穿了就是一通 webhook,只是兩邊都在 GitHub 自己家裡。
 
+<figure>
+<img src="/bloger/images/content-repo-split-flow.svg" alt="內容 repo 到站台的自動佈署流程圖" style="max-width:360px;width:100%;height:auto;display:block;margin:0 auto" />
+<figcaption>一條線:在內容 repo push 一篇 md,事件叫醒站台,站台抓文章、建置、佈署上線。</figcaption>
+</figure>
+
 ## 為什麼不用 submodule
 
 我有想過 git submodule,或是乾脆 monorepo 分資料夾。
