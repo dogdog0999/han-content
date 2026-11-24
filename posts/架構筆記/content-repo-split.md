@@ -4,66 +4,69 @@ date: 2026-11-25
 category: 架構筆記
 tags: [GitHub Actions, CI/CD, repository_dispatch, 自動化]
 badge: CI
-excerpt: 文章跟站台程式本來擠在同一個 repo,改個排版要走 PR、寫篇筆記也卡流程。後來把內容拆成獨立 repo,push 一篇就自己佈署,寫東西總算零摩擦了。
+excerpt: 文章跟站台程式本來擠在同一個 repo,想發篇廢文也要開 PR。後來把內容拆出去,push 就自己上站。
 ---
 
-這個部落格的程式碼有開 PR 保護,立意是好的——不想讓自己半夜手滑把站推壞。
+這個部落格的程式碼有開 PR 保護,是怕自己半夜手滑把站推壞。
 
-問題是,文章跟程式本來住在同一個 repo。於是「我只是想發一篇廢文」也得走一輪流程,改個錯字還要開分支。久了就懶得寫。
-
-**我要的其實很簡單:寫文章這件事,摩擦愈小愈好。**
+但文章跟程式本來在同一個 repo,所以我只是想發一篇廢文,也得開分支、等 CI、再 merge。改個錯字也一樣。後來就變得不太想寫了。
 
 ## 先放結果
 
 現在我發文章只做一件事:在內容 repo 丟一個 `.md`,然後 push。
 
-剩下的全自動,大概半分鐘站上就有了。CI 跑完長這樣:
+大概半分鐘,站上就有了。Actions 跑完長這樣:
 
 ```text
 ✓ Notify site to deploy        (內容 repo:2s)
 ✓ Build & Deploy               (站台:repository_dispatch 觸發)
-  posts fetched: ...
   22 page(s) built
   Rsync site to VPS            ✓
 ```
 
-這篇文章本身,就是我 push 上去測出來的。
+這篇就是我 push 上去測的。
 
-## 拆成兩個 repo
+## 怎麼接的
 
-想法是把「內容」跟「程式」分家:
+我把文章拆成另一個 repo,叫 `han-content`,裡面只有 `posts/*.md`,沒開保護,想改就直接 commit。
 
-`han-content` 只放 `posts/*.md`,不設保護,愛改就改、直接 commit。
+站台 repo 還是原本那個,版型、搜尋、CI 都在這邊,差別是建置的時候才去把文章 clone 進來。
 
-站台 repo 照舊,版型、搜尋、CI 都在這;**建置的時候才去把文章 clone 進來**。
+剩下的問題是:內容 repo 一 push,怎麼讓站台知道?
 
-最關鍵的是那條看不見的線:內容 repo 一 push,要怎麼「叫醒」站台去佈署?
+我用的是 `repository_dispatch`。內容 repo 有個很小的 workflow,push 的時候打一下 GitHub API,送一個自訂事件過去。站台的 `deploy.yml` 多掛一個監聽:
 
-答案是 `repository_dispatch`。內容 repo 加一個小 workflow,push 時打一下 GitHub API,對站台發一個自訂事件;站台的部署流程就多掛一個 `on: repository_dispatch`,收到事件就開跑。
+```yaml
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [content-updated]
+```
 
-說穿了就是一通 webhook,只是兩邊都在 GitHub 自己家裡。
-
-<figure>
-<img src="/bloger/images/content-repo-split-flow.svg" alt="內容 repo 到站台的自動佈署流程圖" style="max-width:360px;width:100%;height:auto;display:block;margin:0 auto" />
-<figcaption>一條線:在內容 repo push 一篇 md,事件叫醒站台,站台抓文章、建置、佈署上線。</figcaption>
-</figure>
+收到就開始建置、rsync 到 VPS。說穿了就是 webhook,只是兩邊都在 GitHub 裡。
 
 ## 為什麼不用 submodule
 
-我有想過 git submodule,或是乾脆 monorepo 分資料夾。
+我有想過 submodule,也想過同一個 repo 分資料夾。
 
-submodule 每次更新都要在主 repo 再 commit 一次指標,等於沒拆乾淨,摩擦還在。monorepo 分資料夾又回到「同一個 repo、同一套保護」的老問題。
+submodule 是 git 內建的功能,可以把另一個 repo 掛進主 repo 的某個資料夾,像這樣把文章 repo 掛在 `posts/` 底下。但主 repo 記的不是對方的檔案,只是「指到它的哪一個 commit」。所以內容 repo 每多一篇文章,主 repo 還得再 commit 一次,把指標更新過去,感覺沒有真的拆開。
 
-拆兩個 repo + 一條 dispatch,反而是最省事的:**內容那邊完全自由,程式這邊保護照舊,中間用一個事件接起來。**
+<figure>
+<img src="/bloger/images/submodule-pointer.svg" alt="submodule 下每多一篇文章,內容 repo 多一個 commit,主 repo 也得多一個更新指標的 commit" />
+<figcaption>內容 repo 每多一篇,主 repo 就得多一個「更新指標」的 commit(金色那幾個)。</figcaption>
+</figure>
 
-代價也很誠實:多一把 PAT 要保管(給內容 repo 用來發事件),本機要完整預覽得把兩個 repo 都拉下來。我寫了個 `pull-content` 腳本把文章抓回本機,算是補上這個小麻煩。
+分資料夾的話,保護規則還是同一套,回到原點。
 
-## 踩到的幾個坑
+所以就拆成兩個 repo,中間用一個事件接起來。內容那邊隨便我改,程式這邊保護照舊。
 
-嵌入向量的快取 key 是用文章內容算 hash 的,所以「抓文章」這步一定要排在快取之前,不然 key 永遠對不上、每次都重算。
+缺點也有:要多保管一把 PAT(內容 repo 用它發事件),而且本機要看完整的站,得把兩邊都拉下來。我寫了個 `pull-content` 腳本把文章抓回本機,算是湊合著解掉。
 
-站台這邊的 `src/content/posts/` 要記得 gitignore,否則本機殘留的舊檔會跟抓進來的打架。
+## 踩到的坑
 
-那把 PAT 權限只給到 `Contents: write`、而且只授權站台那個 repo——能發事件就好,不用給它整個帳號。
+嵌入向量的快取 key 是用文章內容算 hash,所以「抓文章」這步要排在快取之前,不然 key 永遠對不上,每次都整批重算。
 
-先這樣。之後如果想加「草稿預覽」或排程發文,再回來補。
+站台這邊的 `src/content/posts/` 要 gitignore,不然本機殘留的舊檔會跟新抓的打架。
+
+先這樣。
