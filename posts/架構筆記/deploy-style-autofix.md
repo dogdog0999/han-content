@@ -1,5 +1,5 @@
 ---
-title: 偷懶貼 AI 產的 HTML 也不怕：部署端三層 AI 自動校正
+title: 偷懶貼 AI 產的 HTML 也不怕 (上) ：部署端三層 AI 自動校正
 date: 2026-11-24
 category: 架構筆記
 tags: [AI, rehype, Cloudflare Workers, Edge Function, CI/CD, XSS]
