@@ -1,0 +1,47 @@
+name: AI 影片解說觸發
+
+# 這次 push 改到、且有 ai-video-made 標籤的文章,就打站台的 AI 影片 Worker 去生成。
+# Worker 會用文章內容 hash 做快取:內容沒變就不會重算、不花錢。
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'posts/**/*.md'
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # 要能跟上一個 commit 做 diff
+
+      - name: 觸發有 ai-video-made 的變動文章
+        env:
+          WORKER_URL: ${{ secrets.AI_VIDEO_WORKER_URL }}       # 例:https://han-ai-video.xxx.workers.dev
+          TRIGGER_TOKEN: ${{ secrets.AI_VIDEO_TRIGGER_TOKEN }} # 跟 Worker 的 TRIGGER_TOKEN 一致
+        run: |
+          set -euo pipefail
+          if [ -z "${WORKER_URL:-}" ] || [ -z "${TRIGGER_TOKEN:-}" ]; then
+            echo "尚未設定 AI_VIDEO_WORKER_URL / AI_VIDEO_TRIGGER_TOKEN,略過。"; exit 0
+          fi
+          # 跟上一個 commit 比,找出新增/修改的文章(第一次 push 就比空樹)
+          before="$(git rev-parse HEAD^ 2>/dev/null || git hash-object -t tree /dev/null)"
+          changed="$(git diff --name-only --diff-filter=AM "$before" HEAD -- 'posts/**/*.md' || true)"
+          if [ -z "$changed" ]; then echo "沒有文章變動。"; exit 0; fi
+
+          echo "$changed" | while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            # 只處理有 ai-video-made 標籤的(標籤寫在同一行 tags: [...])
+            if ! grep -qE '^tags:.*ai-video-made' "$f"; then
+              echo "跳過(無 ai-video-made):$f"; continue
+            fi
+            slug="${f#posts/}"; slug="${slug%.md}"
+            echo "觸發生成:$slug"
+            # 連文章內容一起送,避免 Worker 去抓 raw 拿到快取舊版
+            jq -n --arg slug "$slug" --rawfile content "$f" '{slug:$slug, content:$content}' \
+              | curl -sS -X POST "$WORKER_URL/generate" \
+                  -H "x-trigger-token: $TRIGGER_TOKEN" \
+                  -H "content-type: application/json" \
+                  --data-binary @- -w ' → HTTP %{http_code}\n' || echo "  (這篇觸發失敗,略過)"
+          done
