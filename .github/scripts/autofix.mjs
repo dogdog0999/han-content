@@ -25,6 +25,7 @@ if (!files.length) {
 }
 
 let fixed = 0;
+const failures = []; // 呼叫失敗(HTTP 錯誤或例外)的文章;有的話最後讓這一步失敗,並在 run 頁面顯示紅色註解與摘要
 for (const f of files) {
   const md = readFileSync(f, 'utf8');
   if (/^\s*isoPage:\s*true\s*$/m.test(md)) {
@@ -39,7 +40,10 @@ for (const f of files) {
       body: JSON.stringify({ title, markdown: md }),
     });
     if (!res.ok) {
+      const hint = res.status === 401 || res.status === 403 ? '(請檢查 AUTOFIX_SECRET 與 Worker 上的是否一致)' : '';
       console.log(`失敗(HTTP ${res.status}),保留原文:${f}`);
+      console.log(`::error file=${f},title=style-autofix 失敗::HTTP ${res.status}${hint},這篇保留原文、沒有校正`);
+      failures.push(`${f}(HTTP ${res.status})`);
       continue;
     }
     const j = await res.json();
@@ -50,7 +54,19 @@ for (const f of files) {
     }
   } catch (err) {
     console.log(`呼叫失敗,保留原文:${f} — ${err.message}`);
+    console.log(`::error file=${f},title=style-autofix 失敗::呼叫失敗:${err.message},這篇保留原文、沒有校正`);
+    failures.push(`${f}(${err.message})`);
   }
 }
 console.log(`共校正 ${fixed} 篇。`);
 out(fixed);
+
+if (failures.length) {
+  // 先把成功校正的結果輸出(上面 out),再讓這一步失敗,Actions 才看得到紅色註解與摘要。
+  console.log(`有 ${failures.length} 篇校正失敗,見上方錯誤註解。`);
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    const lines = [`### ⚠️ style-autofix 有 ${failures.length} 篇校正失敗`, '', ...failures.map((x) => `- ${x}`), ''];
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join(String.fromCharCode(10)));
+  }
+  process.exitCode = 1;
+}
