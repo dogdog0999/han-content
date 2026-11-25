@@ -1,12 +1,14 @@
 name: AI 影片解說觸發
 
-# 這次 push 改到、且有 ai-video-made 標籤的文章,就打站台的 AI 影片 Worker 去生成。
+# push 改到、且有 ai-video-made 標籤的文章,就打站台的 AI 影片 Worker 去生成。
 # Worker 會用文章內容 hash 做快取:內容沒變就不會重算、不花錢。
+# 也可以到 Actions 手動 Run(workflow_dispatch)重掃全部有標籤的文章。
 on:
   push:
     branches: [main]
     paths:
       - 'posts/**/*.md'
+  workflow_dispatch: {}
 
 jobs:
   trigger:
@@ -25,9 +27,13 @@ jobs:
           if [ -z "${WORKER_URL:-}" ] || [ -z "${TRIGGER_TOKEN:-}" ]; then
             echo "尚未設定 AI_VIDEO_WORKER_URL / AI_VIDEO_TRIGGER_TOKEN,略過。"; exit 0
           fi
-          # 跟上一個 commit 比,找出新增/修改的文章(第一次 push 就比空樹)
-          before="$(git rev-parse HEAD^ 2>/dev/null || git hash-object -t tree /dev/null)"
-          changed="$(git diff --name-only --diff-filter=AM "$before" HEAD -- 'posts/**/*.md' || true)"
+          # 手動 Run:重掃全部文章;push:只看這次改動的(core.quotepath=false 才不會把中文檔名變成 \xxx)
+          if [ "${GITHUB_EVENT_NAME:-}" = "workflow_dispatch" ]; then
+            changed="$(find posts -name '*.md')"
+          else
+            before="$(git rev-parse HEAD^ 2>/dev/null || git hash-object -t tree /dev/null)"
+            changed="$(git -c core.quotepath=false diff --name-only --diff-filter=AM "$before" HEAD -- 'posts/**/*.md' || true)"
+          fi
           if [ -z "$changed" ]; then echo "沒有文章變動。"; exit 0; fi
 
           echo "$changed" | while IFS= read -r f; do
