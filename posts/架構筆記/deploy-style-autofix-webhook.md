@@ -41,11 +41,30 @@ inline `style` 全不見、`h1` 變 `h2`，**文字一個字都沒少**。整段
 
 `push` 到 `main` → GitHub 發一個 webhook 打到 Worker → Worker 校正這次改動的文章 → 用 token 把乾淨版 commit 回 repo → 既有的部署照常跑。
 
+<figure>
+<img src="/bloger/images/style-autofix-webhook-flow.svg" alt="push 到 main 後 GitHub 發 webhook 給 Cloudflare Worker;Worker 驗簽章、檢查是不是自己的 commit,用 ctx.waitUntil 把校正丟到背景並馬上回 202;背景讀檔、AI 校正、逐字比對後 commit 回 repo,這個 push 再打一次 webhook 時會被標記擋掉" />
+<figcaption>Worker 分兩段:前面同步的先回 202,後面讀檔、校正、commit 在背景做;自己 commit 的 push 會再打一次 webhook,靠 commit 訊息的標記擋掉。</figcaption>
+</figure>
+
 有幾個地方想了一下才定案。
 
 **保護用簽章，不用 Cloudflare Access。** Cloudflare 一直提醒我這個 Worker 沒套 Access。但 Access 那套是設計給「人登入」或「服務拿 token 來敲」的，而 webhook 是 GitHub 從外面主動打進來——套了 Access，第一個被擋在門外的就是 GitHub。webhook 的正規做法是 HMAC 簽章：GitHub 用我設的密鑰對整包 body 算一個 SHA-256 放進 header，Worker 這邊用同一把密鑰重算、逐字比對，不合就 401。手動那個入口才是用 Bearer 密鑰擋。
 
 **先回 202，剩下的背景做。** GitHub 的 webhook 等不了太久，逾時就當失敗。但校正要呼叫一次 AI、再打 GitHub API 讀寫檔，來回好幾秒。所以 Worker 驗完簽章就馬上回 `202`，真正的校正跟 commit 丟進 `ctx.waitUntil` 背景跑。GitHub 收到快速的 ack，活還是做完。
+
+`ctx` 是 Worker 入口 `fetch(request, env, ctx)` 的第三個參數。Worker 通常是回完 response 就收工，沒等完的非同步工作可能被中斷。`ctx.waitUntil(promise)` 就是跟 Cloudflare 說「回應先送出去，但先別收掉，等這個 promise 跑完」。
+
+寫在 `workers/style-autofix/src/index.mjs` 的 `handleWebhook` 裡，就一行：
+
+```js
+async function handleWebhook(request, env, ctx) {
+  // ……驗簽章、擋掉自己的 commit、整理出這次改動的文章……
+  ctx.waitUntil(processFiles(env, files)); // 丟到背景，不等它
+  return json({ ok: true, queued: files }, 202); // 馬上回
+}
+```
+
+注意它丟進去的是「還沒 await 的 promise」，`processFiles` 在回完 202 之後才繼續跑，所以前面不能 `await` 它，不然又變成等好幾秒才回。
 
 **全部留在 Cloudflare。** 校正的算力、讀寫 repo 的 API，全在 Worker；GitHub 只負責發一個 webhook。CI 的分鐘數一點都沒多花。
 

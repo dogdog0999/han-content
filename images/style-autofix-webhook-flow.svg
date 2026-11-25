@@ -1,0 +1,62 @@
+<svg width="800" height="380" viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="push 到 main 後 GitHub 發 webhook 給 Cloudflare Worker;Worker 驗簽章、檢查是不是自己的 commit,用 ctx.waitUntil 把校正丟到背景並馬上回 202;背景讀檔、AI 校正、逐字比對後 commit 回 repo,這個 push 再打一次 webhook 時會被標記擋掉">
+<defs>
+<marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,1 L6.5,4 L0,7 z" fill="#3f6b4f"/></marker>
+<marker id="ay" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,1 L6.5,4 L0,7 z" fill="#b98a3e"/></marker>
+</defs>
+<rect x="0" y="0" width="800" height="380" rx="12" fill="#faf9f3"/>
+<g fill="none" stroke="#3f6b4f" stroke-width="1.5">
+<rect x="164" y="16" width="620" height="348" rx="12" fill="#ebe7d6" stroke="#a8a38b" stroke-width="1.5" stroke-dasharray="7 5"/>
+<rect x="14" y="62" width="118" height="52" rx="8" fill="#fffdf8"/>
+<rect x="14" y="230" width="118" height="52" rx="8" fill="#fffdf8"/>
+<rect x="180" y="64" width="116" height="48" rx="8" fill="#fffdf8"/>
+<rect x="324" y="64" width="150" height="48" rx="8" fill="#fffdf8"/>
+<rect x="502" y="64" width="130" height="48" rx="8" fill="#fffdf8" stroke="#b98a3e" stroke-width="2"/>
+<rect x="660" y="64" width="108" height="48" rx="8" fill="#fffdf8"/>
+<rect x="180" y="232" width="116" height="48" rx="8" fill="#fffdf8"/>
+<rect x="324" y="232" width="110" height="48" rx="8" fill="#fffdf8"/>
+<rect x="462" y="232" width="110" height="48" rx="8" fill="#fffdf8"/>
+<rect x="600" y="232" width="130" height="48" rx="8" fill="#fffdf8"/>
+<line x1="132" y1="88" x2="178" y2="88" marker-end="url(#ag)"/>
+<line x1="296" y1="88" x2="322" y2="88" marker-end="url(#ag)"/>
+<line x1="474" y1="88" x2="500" y2="88" marker-end="url(#ag)"/>
+<line x1="632" y1="88" x2="658" y2="88" marker-end="url(#ag)"/>
+<line x1="399" y1="62" x2="399" y2="44" stroke="#b98a3e" marker-end="url(#ay)"/>
+<path d="M567 114 V148 H238 V230" stroke="#b98a3e" stroke-width="2" marker-end="url(#ay)"/>
+<line x1="164" y1="160" x2="784" y2="160" stroke="#a8a38b" stroke-width="1" stroke-dasharray="5 4"/>
+<line x1="296" y1="256" x2="322" y2="256" marker-end="url(#ag)"/>
+<line x1="434" y1="256" x2="460" y2="256" marker-end="url(#ag)"/>
+<line x1="572" y1="256" x2="598" y2="256" marker-end="url(#ag)"/>
+<path d="M665 282 V324 H73 V284" marker-end="url(#ag)"/>
+<line x1="73" y1="228" x2="73" y2="116" stroke="#b98a3e" stroke-dasharray="5 4" marker-end="url(#ay)"/>
+</g>
+<g font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif" fill="#2b2f28" text-anchor="middle">
+<text x="73" y="84" font-size="13" font-weight="600">GitHub</text>
+<text x="73" y="102" font-size="11" fill="#5b6354">push 到 main</text>
+<text x="73" y="252" font-size="13" font-weight="600">GitHub</text>
+<text x="73" y="270" font-size="11" fill="#5b6354">多一個 commit</text>
+<text x="238" y="84" font-size="12">收 webhook</text>
+<text x="238" y="101" font-size="12">驗 HMAC 簽章</text>
+<text x="399" y="84" font-size="12">commit 訊息含</text>
+<text x="399" y="101" font-size="12" font-family="ui-monospace,Consolas,monospace">[style-autofix]?</text>
+<text x="567" y="84" font-size="12" font-family="ui-monospace,Consolas,monospace">ctx.waitUntil</text>
+<text x="567" y="101" font-size="12">丟進背景</text>
+<text x="714" y="93" font-size="12.5">回 202</text>
+<text x="238" y="261" font-size="12">讀檔(GitHub API)</text>
+<text x="379" y="261" font-size="12.5">AI 校正</text>
+<text x="517" y="261" font-size="12.5">逐字比對</text>
+<text x="665" y="261" font-size="12">commit 回 repo</text>
+<g font-size="10.5" fill="#5b6354">
+<text x="486" y="80">沒有</text>
+<text x="380" y="316">commit 訊息帶 [style-autofix]</text>
+</g>
+<g text-anchor="start">
+<text x="772" y="38" font-size="11.5" font-weight="600" fill="#8a8670" text-anchor="end">Cloudflare Worker</text>
+<text x="180" y="38" font-size="12" font-weight="600" fill="#5b6354">① 同步:要在逾時前回完</text>
+<text x="409" y="40" font-size="10.5" font-weight="600" fill="#b98a3e">有 → 直接結束(防迴圈)</text>
+<text x="252" y="182" font-size="12" font-weight="600" fill="#b98a3e">② 背景:202 回完之後繼續做</text>
+<text x="82" y="168" font-size="10.5" fill="#b98a3e">這次 push</text>
+<text x="82" y="182" font-size="10.5" fill="#b98a3e">又發 webhook</text>
+<text x="82" y="196" font-size="10.5" fill="#b98a3e">→ 被擋掉</text>
+</g>
+</g>
+</svg>
