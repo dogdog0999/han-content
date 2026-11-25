@@ -32,7 +32,7 @@ AI 影片沒被誤觸發，bot 的 commit 之後也沒再跑第二次 `Publish`�
 - **沒有順序。** 佈署可能在校正 commit 回來前就跑完，又得多佈署一次。
 - **靠標記防迴圈。** Worker 的 commit 也是 push，訊息得帶 `[style-autofix]`。
 - **Worker 保管三把密鑰。** 驗 webhook、讀寫 GitHub、呼叫 NVIDIA。
-- ** 集中管理 ** 方便控制成本。
+- **集中管理。** 方便控制成本。
 
 現在 Worker 只剩 `POST /`，不碰 GitHub。用 CI 內建身分（`GITHUB_TOKEN`）push 的 commit 不會再觸發 workflow，所以不用標記，也不會多佈署一次。
 
