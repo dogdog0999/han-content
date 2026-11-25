@@ -2,13 +2,19 @@ name: AI 影片解說觸發
 
 # push 改到、且有 ai-video-made 標籤的文章,就打站台的 AI 影片 Worker 去生成。
 # Worker 會用文章內容 hash 做快取:內容沒變就不會重算、不花錢。
-# 也可以到 Actions 手動 Run(workflow_dispatch)重掃全部有標籤的文章。
+# 也可以到 Actions 手動 Run(workflow_dispatch)重掃全部有標籤的文章;手動時預設 force=true,
+# 會忽略快取強制重生成(例如播放器格式改了、要讓舊影片套新格式/字幕時用)。
 on:
   push:
     branches: [main]
     paths:
       - 'posts/**/*.md'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 強制重生成(忽略快取)
+        type: boolean
+        default: true
 
 jobs:
   trigger:
@@ -22,11 +28,15 @@ jobs:
         env:
           WORKER_URL: ${{ secrets.AI_VIDEO_WORKER_URL }}       # 例:https://han-ai-video.xxx.workers.dev
           TRIGGER_TOKEN: ${{ secrets.AI_VIDEO_TRIGGER_TOKEN }} # 跟 Worker 的 TRIGGER_TOKEN 一致
+          FORCE_INPUT: ${{ github.event.inputs.force }}
         run: |
           set -euo pipefail
           if [ -z "${WORKER_URL:-}" ] || [ -z "${TRIGGER_TOKEN:-}" ]; then
             echo "尚未設定 AI_VIDEO_WORKER_URL / AI_VIDEO_TRIGGER_TOKEN,略過。"; exit 0
           fi
+          # 手動 Run 預設強制重生成;push 走快取
+          FORCE=false
+          if [ "${GITHUB_EVENT_NAME:-}" = "workflow_dispatch" ] && [ "${FORCE_INPUT:-true}" = "true" ]; then FORCE=true; fi
           # 手動 Run:重掃全部文章;push:只看這次改動的(core.quotepath=false 才不會把中文檔名變成 \xxx)
           if [ "${GITHUB_EVENT_NAME:-}" = "workflow_dispatch" ]; then
             changed="$(find posts -name '*.md')"
@@ -43,9 +53,10 @@ jobs:
               echo "跳過(無 ai-video-made):$f"; continue
             fi
             slug="${f#posts/}"; slug="${slug%.md}"
-            echo "觸發生成:$slug"
+            echo "觸發生成:$slug (force=$FORCE)"
             # 連文章內容一起送,避免 Worker 去抓 raw 拿到快取舊版
-            jq -n --arg slug "$slug" --rawfile content "$f" '{slug:$slug, content:$content}' \
+            jq -n --arg slug "$slug" --rawfile content "$f" --argjson force "$FORCE" \
+                 '{slug:$slug, content:$content, force:$force}' \
               | curl -sS -X POST "$WORKER_URL/generate" \
                   -H "x-trigger-token: $TRIGGER_TOKEN" \
                   -H "content-type: application/json" \
