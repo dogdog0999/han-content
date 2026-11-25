@@ -3,8 +3,8 @@ title: 把校正、AI 影片、佈署收進同一條 Publish：觸發全交給 C
 date: 2026-11-25
 category: 架構筆記
 tags: [GitHub Actions, Cloudflare Workers, CI/CD, Webhook, 自動化]
-wordCount: 800
-readingTime: 3
+wordCount: 400
+readingTime: 2
 excerpt: 發文之後要跑三件事：校正、AI 影片、佈署，但原本三種觸發方式各走各的。我把它們收進 han-content 的一條 workflow，讓 CI 排順序，Worker 只剩運算。
 badge: CI
 ---
