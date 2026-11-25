@@ -9,7 +9,7 @@ excerpt: 發文之後要跑三件事：校正、AI 影片、佈署，但原本�
 badge: CI
 ---
 
-發文之後會跑三件事：結構校正、AI 影片、佈署。佈署和 AI 影片走 CI，結構校正卻是 GitHub 的 **webhook**（有事件就主動打網址通知）直接打 Cloudflare Worker，由它拿 token 讀文章、commit 回 repo（[上](/bloger/posts/deploy-style-autofix/)、[下](/bloger/posts/deploy-style-autofix-webhook/)）。能跑，但三種觸發混著用。
+發文之後會跑三件事：結構校正、AI 影片、佈署。佈署和 AI 影片走 CI，結構校正卻是 GitHub 的 **webhook**（有事件就主動打網址通知）直接打 Cloudflare Worker，由它拿 token 讀文章、commit 回 repo（[上](/bloger/posts/架構筆記/deploy-style-autofix/)、[下](/bloger/posts/架構筆記/deploy-style-autofix-webhook/)）。能跑，但三種觸發混著用。
 
 ## 先放結果
 
