@@ -18,6 +18,9 @@ on:
 
 jobs:
   trigger:
+    # style-autofix Worker 自動 commit 回來的那次 push 不再觸發:它只調整結構、文字不變,
+    # 但內容 hash 會變,不擋的話等於每篇有標籤的文章被 AI 校正後又多花一次 Claude + TTS。
+    if: ${{ !contains(github.event.head_commit.message, '[style-autofix]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
