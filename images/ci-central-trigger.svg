@@ -1,0 +1,79 @@
+<svg width="800" height="472" viewBox="0 0 800 472" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="改之前:push 後有 webhook 直接打 style-autofix Worker 並由它 commit 回 repo、dispatch.yml 通知站台佈署、ai-video.yml 呼叫 AI 影片 Worker,三條各自開跑沒有先後;改之後:push 只觸發 han-content 的一條 Publish workflow,依序做結構校正、AI 影片、通知站台佈署,兩個 Worker 只收 POST、不碰 GitHub">
+<defs>
+<marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,1 L6.5,4 L0,7 z" fill="#3f6b4f"/></marker>
+<marker id="ay" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,1 L6.5,4 L0,7 z" fill="#b98a3e"/></marker>
+</defs>
+<rect x="0" y="0" width="800" height="472" rx="12" fill="#faf9f3"/>
+<g font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif" font-size="14" fill="#2f3a31" text-anchor="middle">
+
+<!-- 改之前 -->
+<text x="24" y="32" font-size="13" fill="#5b6354" text-anchor="start">改之前:三種觸發各自為政</text>
+
+<g fill="#fffdf8" stroke="#3f6b4f" stroke-width="1.5">
+<rect x="24" y="52" width="110" height="40" rx="8"/>
+<rect x="244" y="52" width="180" height="40" rx="8" stroke="#b98a3e" stroke-width="2"/>
+<rect x="534" y="52" width="170" height="40" rx="8" stroke="#b98a3e" stroke-width="2"/>
+<rect x="24" y="104" width="110" height="40" rx="8"/>
+<rect x="244" y="104" width="180" height="40" rx="8"/>
+<rect x="24" y="156" width="110" height="40" rx="8"/>
+<rect x="244" y="156" width="180" height="40" rx="8"/>
+</g>
+<g fill="none" stroke="#3f6b4f" stroke-width="1.5">
+<line x1="134" y1="72" x2="242" y2="72" stroke="#b98a3e" stroke-width="2" marker-end="url(#ay)"/>
+<line x1="424" y1="72" x2="532" y2="72" stroke="#b98a3e" stroke-width="2" marker-end="url(#ay)"/>
+<line x1="134" y1="124" x2="242" y2="124" marker-end="url(#ag)"/>
+<line x1="134" y1="176" x2="242" y2="176" marker-end="url(#ag)"/>
+</g>
+<g font-size="12" fill="#5b6354" font-family="ui-monospace,Consolas,monospace">
+<text x="188" y="66">webhook</text>
+<text x="478" y="66">用 token commit</text>
+<text x="188" y="118">dispatch.yml</text>
+<text x="188" y="170">POST /generate</text>
+</g>
+<text x="79" y="77">push 到 main</text>
+<text x="334" y="77">style-autofix Worker</text>
+<text x="619" y="77">repo 多一個 commit</text>
+<text x="79" y="129">push 到 main</text>
+<text x="334" y="129">站台佈署</text>
+<text x="79" y="181" font-family="ui-monospace,Consolas,monospace" font-size="13">ai-video.yml</text>
+<text x="334" y="181">han-ai-video Worker</text>
+<text x="24" y="220" font-size="12" fill="#5b6354" text-anchor="start">三條各自開跑,沒有先後;commit 回來又是一次 push,靠 [style-autofix] 標記擋</text>
+
+<line x1="24" y1="238" x2="776" y2="238" stroke="#a8a38b" stroke-width="1" stroke-dasharray="5 4"/>
+
+<!-- 改之後 -->
+<text x="24" y="264" font-size="13" fill="#5b6354" text-anchor="start">改之後:一條 Publish,依序做</text>
+
+<rect x="164" y="276" width="612" height="102" rx="12" fill="#ebe7d6" stroke="#a8a38b" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="180" y="297" font-size="12" fill="#b98a3e" text-anchor="start" font-family="ui-monospace,Consolas,monospace">publish.yml:一步失敗,不擋後面的佈署</text>
+
+<g fill="#fffdf8" stroke="#3f6b4f" stroke-width="1.5">
+<rect x="24" y="308" width="110" height="44" rx="8"/>
+<rect x="180" y="308" width="170" height="44" rx="8"/>
+<rect x="400" y="308" width="170" height="44" rx="8"/>
+<rect x="620" y="308" width="140" height="44" rx="8"/>
+<rect x="180" y="412" width="170" height="40" rx="8"/>
+<rect x="400" y="412" width="170" height="40" rx="8"/>
+</g>
+<g fill="none" stroke-width="1.5">
+<line x1="134" y1="330" x2="178" y2="330" stroke="#3f6b4f" marker-end="url(#ag)"/>
+<line x1="350" y1="330" x2="398" y2="330" stroke="#b98a3e" stroke-width="2" marker-end="url(#ay)"/>
+<line x1="570" y1="330" x2="618" y2="330" stroke="#b98a3e" stroke-width="2" marker-end="url(#ay)"/>
+<line x1="265" y1="352" x2="265" y2="410" stroke="#3f6b4f" marker-end="url(#ag)"/>
+<line x1="485" y1="352" x2="485" y2="410" stroke="#3f6b4f" marker-end="url(#ag)"/>
+</g>
+<text x="79" y="335">push 到 main</text>
+<text x="265" y="335">① 結構校正</text>
+<text x="485" y="335">② AI 影片</text>
+<text x="690" y="335">③ 通知佈署</text>
+<g font-size="12" fill="#5b6354" font-family="ui-monospace,Consolas,monospace" text-anchor="start">
+<text x="273" y="396">POST /</text>
+<text x="493" y="396">POST /generate</text>
+<text x="620" y="370">repository_dispatch</text>
+</g>
+<text x="265" y="437">style-autofix Worker</text>
+<text x="485" y="437">han-ai-video Worker</text>
+<text x="590" y="432" font-size="12" fill="#5b6354" text-anchor="start">Worker 只收 POST、</text>
+<text x="590" y="448" font-size="12" fill="#5b6354" text-anchor="start">只做運算,不碰 GitHub</text>
+</g>
+</svg>
