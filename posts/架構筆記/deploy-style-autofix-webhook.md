@@ -1,6 +1,6 @@
 ---
 title: 偷懶貼 AI 產的 HTML 也不怕（下）：push 完它自己 commit 回來
-date: 2026-11-24
+date: 2026-11-24T21:00:00
 category: 架構筆記
 tags: [AI, Cloudflare Workers, Webhook, GitHub API, CI/CD]
 excerpt: 上一篇讓 build 的時候自動把偷懶 HTML 清乾淨，但我還是得手動把來源餵給校正。這篇把最後一哩補上：push 完，它自己 commit 乾淨版回來。

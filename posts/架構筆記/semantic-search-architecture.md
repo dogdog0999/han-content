@@ -1,6 +1,6 @@
 ---
 title: 幫靜態部落格加入「看得懂意思」的 AI 搜尋
-date: 2026-11-24
+date: 2026-11-24T09:00:00
 category: 架構筆記
 tags: [搜尋, 搜尋向量化, embedding, serverless, Edge Computing, Cloudflare, NVIDIA, ai-video-made]
 excerpt: 靜態站沒後端、VPS 又小，那語意搜尋的運算要放哪？我最後讓自己這台機器一行都不跑。
