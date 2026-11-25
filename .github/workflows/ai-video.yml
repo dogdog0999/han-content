@@ -1,14 +1,10 @@
 name: AI 影片解說觸發
 
-# push 改到、且有 ai-video-made 標籤的文章,就打站台的 AI 影片 Worker 去生成。
-# Worker 會用文章內容 hash 做快取:內容沒變就不會重算、不花錢。
-# 也可以到 Actions 手動 Run(workflow_dispatch)重掃全部有標籤的文章;手動時預設 force=true,
-# 會忽略快取強制重生成(例如播放器格式改了、要讓舊影片套新格式/字幕時用)。
+# 【只能手動】重掃「全部」有 ai-video-made 標籤的文章並重新生成 AI 影片。
+# 平常 push 後的 AI 影片(只做這次改動的文章)已經在 publish.yml 的 ② 步驟,不用來這裡。
+# 這支只在「播放器格式改了、要讓舊影片套新格式/字幕」這類情況手動跑。
+# 注意:force 預設 true = 忽略快取、全部重做,會花 Claude + Google TTS 的錢,跑之前想清楚。
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'posts/**/*.md'
   workflow_dispatch:
     inputs:
       force:
@@ -18,9 +14,6 @@ on:
 
 jobs:
   trigger:
-    # style-autofix Worker 自動 commit 回來的那次 push 不再觸發:它只調整結構、文字不變,
-    # 但內容 hash 會變,不擋的話等於每篇有標籤的文章被 AI 校正後又多花一次 Claude + TTS。
-    if: ${{ !contains(github.event.head_commit.message, '[style-autofix]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

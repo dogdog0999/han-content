@@ -1,0 +1,103 @@
+name: Publish(校正 → AI 影片 → 佈署)
+
+# push 到 main 之後,依序做三件事。全部在這一條 workflow 裡,有順序、每一步看得到:
+#  ① 結構校正:對這次改動的文章呼叫 style-autofix Worker;有變動就用 CI 內建身分 commit 回 main
+#     (內建身分 push 的 commit 不會再觸發任何 workflow,所以不會迴圈)
+#  ② AI 影片:對這次改動、且有 ai-video-made 標籤的文章呼叫 AI 影片 Worker(Worker 有 hash 快取)
+#  ③ 佈署:通知站台 repo vps-blogger 重建(repository_dispatch)
+# 沒設對應的 secret,該步會自己略過;①②失敗不擋③(文章還是要上站)。
+# 手動 Run(workflow_dispatch):①②沒有「改動的文章」所以不做事,只做③ 佈署。
+# 要「重做全部 AI 影片」請用 ai-video.yml(手動)。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 找出這次改動的文章
+        run: |
+          set -euo pipefail
+          : > "$RUNNER_TEMP/changed.txt"
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            before="${{ github.event.before }}"
+            if [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
+              before="$(git rev-parse HEAD^ 2>/dev/null || git hash-object -t tree /dev/null)"
+            fi
+            git -c core.quotepath=false diff --name-only --diff-filter=AM "$before" HEAD -- 'posts/**/*.md' > "$RUNNER_TEMP/changed.txt" || true
+          fi
+          echo "改動的文章:"; cat "$RUNNER_TEMP/changed.txt"
+
+      # 過渡期保險:訊息含 [style-autofix] 的 push(舊 webhook 版本留下的)不再校正/做影片。
+      - name: ① 結構校正(style-autofix Worker)
+        id: autofix
+        if: ${{ !contains(github.event.head_commit.message, '[style-autofix]') }}
+        continue-on-error: true
+        env:
+          WORKER_URL: ${{ secrets.AUTOFIX_WORKER_URL }}
+          AUTOFIX_SECRET: ${{ secrets.AUTOFIX_SECRET }}
+        run: node .github/scripts/autofix.mjs "$RUNNER_TEMP/changed.txt"
+
+      - name: ① 校正結果 commit 回 main
+        if: ${{ steps.autofix.outputs.fixed != '' && steps.autofix.outputs.fixed != '0' }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add posts
+          git commit -m "style-autofix: 正規化 ${{ steps.autofix.outputs.fixed }} 篇 [style-autofix]"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: ② AI 影片(有 ai-video-made 標籤的變動文章)
+        if: ${{ !contains(github.event.head_commit.message, '[style-autofix]') }}
+        continue-on-error: true
+        env:
+          WORKER_URL: ${{ secrets.AI_VIDEO_WORKER_URL }}
+          TRIGGER_TOKEN: ${{ secrets.AI_VIDEO_TRIGGER_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${WORKER_URL:-}" ] || [ -z "${TRIGGER_TOKEN:-}" ]; then
+            echo "尚未設定 AI_VIDEO_WORKER_URL / AI_VIDEO_TRIGGER_TOKEN,略過。"; exit 0
+          fi
+          changed="$(cat "$RUNNER_TEMP/changed.txt")"
+          if [ -z "$changed" ]; then echo "沒有文章變動。"; exit 0; fi
+          echo "$changed" | while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            if ! grep -qE '^tags:.*ai-video-made' "$f"; then
+              echo "跳過(無 ai-video-made):$f"; continue
+            fi
+            slug="${f#posts/}"; slug="${slug%.md}"
+            echo "觸發生成:$slug"
+            # 連文章內容(已是校正後的版本)一起送,避免 Worker 去抓 raw 拿到快取舊版
+            jq -n --arg slug "$slug" --rawfile content "$f" \
+                 '{slug:$slug, content:$content, force:false}' \
+              | curl -sS -X POST "$WORKER_URL/generate" \
+                  -H "x-trigger-token: $TRIGGER_TOKEN" \
+                  -H "content-type: application/json" \
+                  --data-binary @- -w ' → HTTP %{http_code}\n' || echo "  (這篇觸發失敗,略過)"
+          done
+
+      - name: ③ 通知站台佈署(repository_dispatch)
+        if: ${{ always() }}
+        run: |
+          curl -sf -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.DISPATCH_PAT }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/dogdog0999/vps-blogger/dispatches \
+            -d '{"event_type":"content-updated"}'
