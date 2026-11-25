@@ -19,6 +19,7 @@ concurrency:
 
 permissions:
   contents: write
+  issues: write   # ① 校正失敗時開 Issue 用
 
 jobs:
   publish:
@@ -49,7 +50,17 @@ jobs:
         env:
           WORKER_URL: ${{ secrets.AUTOFIX_WORKER_URL }}
           AUTOFIX_SECRET: ${{ secrets.AUTOFIX_SECRET }}
+          AUTOFIX_FAILURES_FILE: ${{ runner.temp }}/autofix-failures.json
         run: node .github/scripts/autofix.mjs "$RUNNER_TEMP/changed.txt"
+
+      # ① 有失敗就在 GitHub 開 Issue(哪篇文章、原因、檔案/編輯/歷史/線上頁面/log 的捷徑連結)。
+      # 已有未關閉的 autofix-failure Issue 時改成留言,不會每次都開新的。
+      - name: ① 校正失敗 → 開 Issue(文章、原因、捷徑連結)
+        if: ${{ always() && steps.autofix.outcome == 'failure' }}
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node .github/scripts/autofix-report.mjs "${{ runner.temp }}/autofix-failures.json"
 
       - name: ① 校正結果 commit 回 main
         if: ${{ steps.autofix.outputs.fixed != '' && steps.autofix.outputs.fixed != '0' }}

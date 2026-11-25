@@ -25,6 +25,7 @@ if (!files.length) {
 }
 
 let fixed = 0;
+const failureItems = []; // {path, reason}:給 autofix-report.mjs 開 Issue 用
 const failures = []; // 呼叫失敗(HTTP 錯誤或例外)的文章;有的話最後讓這一步失敗,並在 run 頁面顯示紅色註解與摘要
 for (const f of files) {
   const md = readFileSync(f, 'utf8');
@@ -44,6 +45,7 @@ for (const f of files) {
       console.log(`失敗(HTTP ${res.status}),保留原文:${f}`);
       console.log(`::error file=${f},title=style-autofix 失敗::HTTP ${res.status}${hint},這篇保留原文、沒有校正`);
       failures.push(`${f}(HTTP ${res.status})`);
+      failureItems.push({ path: f, reason: `HTTP ${res.status}${hint}` });
       continue;
     }
     const j = await res.json();
@@ -56,6 +58,7 @@ for (const f of files) {
     console.log(`呼叫失敗,保留原文:${f} — ${err.message}`);
     console.log(`::error file=${f},title=style-autofix 失敗::呼叫失敗:${err.message},這篇保留原文、沒有校正`);
     failures.push(`${f}(${err.message})`);
+    failureItems.push({ path: f, reason: `呼叫失敗:${err.message}` });
   }
 }
 console.log(`共校正 ${fixed} 篇。`);
@@ -68,5 +71,7 @@ if (failures.length) {
     const lines = [`### ⚠️ style-autofix 有 ${failures.length} 篇校正失敗`, '', ...failures.map((x) => `- ${x}`), ''];
     appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join(String.fromCharCode(10)));
   }
+  // 失敗清單寫成 JSON,workflow 下一步(autofix-report.mjs)會據此在 GitHub 開 Issue。
+  if (process.env.AUTOFIX_FAILURES_FILE) writeFileSync(process.env.AUTOFIX_FAILURES_FILE, JSON.stringify(failureItems, null, 2));
   process.exitCode = 1;
 }
