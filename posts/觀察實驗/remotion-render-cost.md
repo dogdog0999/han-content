@@ -9,11 +9,12 @@ excerpt: 想把投影片影片真的 render 成 mp4，試了 Remotion + GitHub A
 badge: 成本
 ---
 
-
 Remotion 能用 React 寫動畫、再 render 成 mp4，看起來正合用。
+
 問題是我不想為它養一台常駐的 render 機器，於是試了另一條：**把 render 丟到 GitHub Actions，用 matrix 把影格拆成好幾格平行跑。**
 
 為了算得準，我先試拍了一集無聲 pilot，再寫一個中等複雜度的合成，跑了兩輪真實 workflow，從 Actions API 直接抓每一步的起訖秒數——不是自己掐表估的。
+
 <figure>
   <video src="/bloger/images/remotion-render-cost/remotion-bench-silent.mp4" controls muted loop playsinline preload="metadata"></video>
   <figcaption>GitHub Actions render 出來的無聲成品（那支中等複雜度的合成：標題彈進來、條列淡入、一個轉的 SVG）。中文會變成 □，是因為 CI 的機器沒裝中文字型、我也沒把字型打包進去。</figcaption>
