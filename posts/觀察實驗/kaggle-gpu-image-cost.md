@@ -98,7 +98,7 @@ Kaggle 的 GPU 額度是**每週 30 小時、session 開著就計**，閒置也�
 
 ## 10張三國腳色
 
-老實說一下：下面這張 10 位的 grid，**不是上面那套 Kaggle SDXL，而是用另一條免費路——Cloudflare Workers AI 的 FLUX-schnell 生的**。原因很蠢：Kaggle 那批 SDXL 的 PNG 打包下載失敗、session 又停了，沒留住；乾脆用文末提到的那條路在本機補生（約 1730 neurons，還在每天 1 萬的免費額度內）。剛好當兩條免費路的對照。
+下面這張 10 位的 grid，**不是上面那套 Kaggle SDXL，而是用另一條免費路——Cloudflare Workers AI 的 FLUX-schnell 生的**（Kaggle 那批檔案沒留住，改用這條補生）。剛好當兩條免費路的對照。
 
 <figure>
   <img src="/bloger/images/kaggle-gpu-image-cost/kaggle-characters-grid.jpg" alt="10 位三國人物的 grid：關羽、張飛、趙雲、呂布、諸葛亮、劉備、曹操、孫權、周瑜、司馬懿">
