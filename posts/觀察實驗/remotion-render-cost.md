@@ -1,5 +1,5 @@
 ---
-title: Remotion 真的能 render 影片，但我算完帳沒用它
+title: 把 render 丟到 GitHub Actions
 date: 2026-11-26
 category: 觀察實驗
 tags: [Remotion, GitHub Actions, 影片生成, 成本, side project]
