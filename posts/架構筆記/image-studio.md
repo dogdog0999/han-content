@@ -3,7 +3,7 @@ title: 給自己做了個生圖的小工具
 date: 2026-11-27
 category: 架構筆記
 tags: [AI, 生圖, Cloudflare Workers, FLUX, side project]
-wordCount: 300
+wordCount: 400
 readingTime: 2
 excerpt: 做影片、寫文章常要配一張沒版權疑慮的圖，所以又拆了個小頁面：丟一句 prompt，幾秒長一張可商用的圖。
 badge: AI
@@ -32,5 +32,10 @@ badge: AI
 一個小地方：我預設勾了「**避免圖中出現文字**」。AI 畫中文字常常糊成一團，乾脆讓它別畫字，標題跟名字之後再用 SVG 疊上去。
 
 產好的圖都留在「最近的圖」，只存最新 20 張、超過自動刪最舊的——它就是個臨時素材夾，不是相簿。
+
+<figure>
+  <img src="/bloger/images/image-studio/gallery.webp" alt="生圖工作室的「最近的圖」：最新幾張的縮圖">
+  <figcaption>「最近的圖」留最新 20 張，點一下看大圖 / 下載。</figcaption>
+</figure>
 
 目前拿來當自己的素材產生器剛好夠用。先這樣，之後想到再補。
