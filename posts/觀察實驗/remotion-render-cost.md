@@ -15,7 +15,7 @@ Remotion 能用 React 寫動畫、再 render 成 mp4，看起來正合用。
 
 為了算得準，我先試拍了一集無聲 pilot，再寫一個中等複雜度的合成，跑了兩輪真實 workflow，從 Actions API 直接抓每一步的起訖秒數——不是自己掐表估的。
 
-## 算出來的帳
+## 實際比較
 
 兩輪實跑抓到的數字（跑在 GitHub Actions 的標準 Linux runner 上，起訖秒數直接從 GitHub Actions API 拿）：
 
