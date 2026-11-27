@@ -59,4 +59,4 @@ badge: AI
 
 跑了幾次下來，該機械處理的都機械掉了，我手動要調的剩沒幾個。
 
-想看為什麼這樣切,回[上篇](/bloger/posts/架構筆記/ai-auto-correct-why/)。
+想看為什麼這樣切，回[上篇](/bloger/posts/架構筆記/ai-auto-correct-why/)。
