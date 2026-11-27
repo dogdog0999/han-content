@@ -1,12 +1,12 @@
 ---
-title: 越多 Worker 越亂，把設定和金鑰收成一份單一真相
+title: 越多 Worker 越亂，把設定和金鑰收成集中管理
 date: 2026-11-27
 category: 架構筆記
 tags: [Cloudflare, Cloudflare Workers, Secrets Store, 設定管理, 機密管理, CI/CD]
 wordCount: 600
 readingTime: 3
 excerpt: 部落格長到有三個 Cloudflare Worker，設定和金鑰散在各自的檔案裡，改一次得到處翻。我把它們收進一份單一真相，金鑰的值不放進 repo。
-badge: CFG
+badge: Secrets Store
 ---
 
 這部落格不知不覺長出三個 Cloudflare Worker：搜尋用的、幫文章做結構校正的、產 AI 影片和圖的。
