@@ -1,4 +1,4 @@
-// 來源:vps-blogger/tools/style-gate/fullwidth-punct.mjs(vendored 進 han-content 供 publish.yml 用;改功能請改 vps-blogger 那份再同步過來)。
+// 來源:vps-blogger/tools/style-gate/fullwidth-punct.mjs(vendored,改功能改那份再 npm run gate:sync 同步)。
 // fullwidth-punct.mjs — Lane A①b(「1a」):全形標點正規化,但**只做能守住不變量的那一塊**。
 //
 // 不變量:只會把「**夾在兩個 CJK 字之間**的半形 `,` 或 `.`」換成全形 `，`/`。`,其他一個字元都不動;

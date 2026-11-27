@@ -1,4 +1,4 @@
-// 來源:vps-blogger/tools/style-gate/rag-examples.mjs(vendored 進 han-content 供 publish.yml 用;改功能請改 vps-blogger 那份再同步過來)。
+// 來源:vps-blogger/tools/style-gate/rag-examples.mjs(vendored,改功能改那份再 npm run gate:sync 同步)。
 // rag-examples.mjs — Lane B 的「自我學習」例子庫(RAG few-shot)。**下一步**,先把格式與 loader 定好。
 //
 // 概念(見 docs/style-gate-plan.md):把作者歷次「原句 → 改後」存成例子,之後當 few-shot

@@ -1,4 +1,4 @@
-// 來源:vps-blogger/tools/style-gate/style-lint.mjs(vendored 進 han-content 供 publish.yml 用;改功能請改 vps-blogger 那份再同步過來)。
+// 來源:vps-blogger/tools/style-gate/style-lint.mjs(vendored,改功能改那份再 npm run gate:sync 同步)。
 // style-lint.mjs — Lane B:AI 腔「送出前 lint」。**只列建議、絕不改字。**
 //
 // 為什麼只建議不自動改(見 .claude/skills/safe-ai-autofix):少排比、少對仗、結尾不浮誇

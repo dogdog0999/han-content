@@ -1,4 +1,4 @@
-// 來源:vps-blogger/tools/style-gate/zh-tw-terms.mjs(vendored 進 han-content 供 publish.yml 用;改功能請改 vps-blogger 那份再同步過來)。
+// 來源:vps-blogger/tools/style-gate/zh-tw-terms.mjs(vendored,改功能改那份再 npm run gate:sync 同步)。
 // zh-tw-terms.mjs — Lane A①:大陸用詞 → 台灣電腦用詞(deterministic、不經 AI)
 //
 // 這條是「發文前風格把關」裡**定得出不變量**的一條,所以可以自動套用(見 docs/style-gate-plan.md

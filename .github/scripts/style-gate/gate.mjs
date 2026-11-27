@@ -1,4 +1,4 @@
-// 來源:vps-blogger/tools/style-gate/gate.mjs(vendored 進 han-content 供 publish.yml 用;改功能請改 vps-blogger 那份再同步過來)。
+// 來源:vps-blogger/tools/style-gate/gate.mjs(vendored,改功能改那份再 npm run gate:sync 同步)。
 // gate.mjs — 發文前風格把關 CLI。把兩條路串起來跑,但**分得很清楚**(見 docs/style-gate-plan.md):
 //
 //   Lane A(定得出不變量 → 自動 / 擋下):
@@ -7,7 +7,8 @@
 //     · secrets 真實金鑰值:fail-closed,偵測到就 exit 2、不改任何字。
 //   Lane B(定不出不變量 → 只建議、人點頭):
 //     · lint    疑似 AI 腔(排比/對仗/浮誇/流行詞反覆/絕對口吻/段落過長/括弧全半形):確定性,只列建議。
-//     · ai      需語意判斷的(blockquote 強調):--ai 才開、要 NVIDIA_API_KEY,沒 key 乾淨略過。只建議。
+//     · ai      需語意判斷的(blockquote 強調):--ai 才開、要 AUTOFIX_WORKER_URL + AUTOFIX_SECRET
+//               (打 Worker /lint,key 留 Cloudflare),沒設乾淨略過。只建議。
 //   Lane B 永遠只列建議,絕不改字、絕不影響 exit。
 //
 // 用法:
@@ -73,7 +74,7 @@ async function main() {
   const report = { terms: [], punct: [], secrets: [], lint: [], ai: [] };
   // --ai 開了但沒 key:乾淨略過(不爆),印一行提醒。
   const aiOn = opts.ai && aiAvailable();
-  if (opts.ai && !aiOn) console.log('[style-gate] --ai 已開,但未設 NVIDIA_API_KEY,AI 偵測略過(只跑確定性規則)。\n');
+  if (opts.ai && !aiOn) console.log('[style-gate] --ai 已開,但未設 AUTOFIX_WORKER_URL / AUTOFIX_SECRET,AI 偵測略過(只跑確定性規則)。\n');
   let termsPending = 0;
   let secretBlocks = 0;
 
