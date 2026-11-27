@@ -42,6 +42,20 @@ const GENERIC = /[A-Za-z0-9_\-+/=]{24,}/g;
 // 看起來像雜湊的純 hex(git SHA、檔案雜湊…),沒有機密關鍵字就別當成金鑰。
 const PURE_HEX = /^[0-9a-f]{32,64}$/i;
 
+// 把「圖片/連結的路徑段」遮成等長空白,只給高熵掃描用(已知金鑰格式照樣掃原行)。
+// 路徑不是金鑰,但長路徑(/bloger/images/xxx)會被當高熵長字串;同行又有「金鑰/token」字就
+// 誤判成 block、擋下整篇佈署。遮掉這些段就不誤報。等長替換 → 欄位位置不變。
+// base64 值(含 + / =,或 / 前面緊貼字元)不會被當成路徑,仍會被掃到。
+function maskPathsForGeneric(line) {
+  const blank = (m) => ' '.repeat(m.length);
+  return line
+    .replace(/\b(?:src|href|srcset|poster|data-[\w-]+)\s*=\s*"[^"]*"/gi, blank) // HTML 屬性 URL(雙引號)
+    .replace(/\b(?:src|href|srcset|poster|data-[\w-]+)\s*=\s*'[^']*'/gi, blank) // HTML 屬性 URL(單引號)
+    .replace(/\]\([^)\s]*/g, blank)                                             // markdown ](url
+    .replace(/https?:\/\/[^\s"'<>)]+/gi, blank)                                 // 絕對 URL
+    .replace(/(?<![A-Za-z0-9+=/])\.{0,2}\/[A-Za-z0-9._/-]{6,}/g, blank);        // 相對/絕對路徑段(/ 前非 base64 字元)
+}
+
 function shannon(s) {
   const freq = Object.create(null);
   for (const ch of s) freq[ch] = (freq[ch] || 0) + 1;
@@ -91,9 +105,11 @@ export function scanSecrets(input, opts = {}) {
     }
 
     // 2) 一般高熵長字串 → 有機密關鍵字 block,否則(非純 hex 雜湊)warn
+    //    掃「遮掉圖片/連結路徑」後的版本(等長,欄位不變),避免長路徑被誤判。
+    const genericLine = maskPathsForGeneric(line);
     GENERIC.lastIndex = 0;
     let g;
-    while ((g = GENERIC.exec(line))) {
+    while ((g = GENERIC.exec(genericLine))) {
       const tok = g[0];
       const start = g.index;
       if (covered.some(([a, b]) => start >= a && start < b)) continue; // 已知格式已涵蓋
