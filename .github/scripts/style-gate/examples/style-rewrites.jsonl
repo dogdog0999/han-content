@@ -1,0 +1,6 @@
+// 作者歷次「原句 → 改後」例子庫(Lane B few-shot 的種子)。一行一個 JSON;// 開頭或空行會被略過。
+// 欄位:before(原句)、after(改後,空=刪)、rule(選填)、note(選填)。新例子直接 append 到檔尾。
+{"before":"我真正滿意的是,這套流程把每一個環節都打磨到位。","after":"先這樣,之後想到再補。","rule":"grandiose","note":"結尾收平淡,別自誇"}
+{"before":"它快速、穩定、優雅,三者兼具。","after":"它跑起來還算穩。","rule":"triple-parallel","note":"砍掉三段式排比"}
+{"before":"這次我學到三件事:要備份、要測試、要寫文件。","after":"這次比較有感的是記得先備份。","rule":"colon-parallel","note":"冒號對仗列舉改散句"}
+{"before":"寫文章這件事,摩擦愈小愈好。","after":"","rule":"grandiose","note":"口號式句子直接刪"}

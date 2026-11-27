@@ -1,11 +1,13 @@
 name: Publish(校正 → AI 影片 → 佈署)
 
-# push 到 main 之後,依序做三件事。全部在這一條 workflow 裡,有順序、每一步看得到:
+# push 到 main 之後,依序做幾件事。全部在這一條 workflow 裡,有順序、每一步看得到:
+#  ⓪ 風格把關(style-gate):先掃金鑰(偵測到真實金鑰值就擋佈署,fail-closed),
+#     再把大陸→台灣用詞與 CJK 間半形標點正規化後 commit 回 main([style-gate]),Lane B 風格建議出 ::notice。
 #  ① 結構校正:對這次改動的文章呼叫 style-autofix Worker;有變動就用 CI 內建身分 commit 回 main
 #     (內建身分 push 的 commit 不會再觸發任何 workflow,所以不會迴圈)
 #  ② AI 影片:對這次改動、且有 ai-video-made 標籤的文章呼叫 AI 影片 Worker(Worker 有 hash 快取)
 #  ③ 佈署:通知站台 repo vps-blogger 重建(repository_dispatch)
-# 沒設對應的 secret,該步會自己略過;①②失敗不擋③(文章還是要上站)。
+# 沒設對應的 secret,該步會自己略過;①②失敗不擋③,但 ⓪ 金鑰 fail-closed 失敗會擋③(別讓金鑰上站)。
 # 手動 Run(workflow_dispatch):①②沒有「改動的文章」所以不做事,只做③ 佈署。
 # 要「重做全部 AI 影片」請用 ai-video.yml(手動)。
 on:
@@ -42,10 +44,44 @@ jobs:
           fi
           echo "改動的文章:"; cat "$RUNNER_TEMP/changed.txt"
 
+      # ⓪ 發文前風格把關(style-gate,工具 vendored 在 .github/scripts/style-gate/,純 Node、零依賴)。
+      #    排在 ① 之前:先擋金鑰、再把用詞/標點正規化,讓 ① 拿到乾淨內容。--ai 不開(CI 不放 NVIDIA key)。
+      - name: ⓪a 金鑰掃描(fail-closed,偵測到真實金鑰就擋佈署)
+        id: secretgate
+        if: ${{ !contains(github.event.head_commit.message, '[style-autofix]') && !contains(github.event.head_commit.message, '[style-gate]') }}
+        run: |
+          set -euo pipefail
+          if [ ! -s "$RUNNER_TEMP/changed.txt" ]; then echo "沒有文章變動,略過。"; exit 0; fi
+          mapfile -t files < "$RUNNER_TEMP/changed.txt"
+          node .github/scripts/style-gate/gate.mjs --check --only=secrets "${files[@]}"
+
+      - name: ⓪b 用詞/標點自動校正(--apply)+ 風格建議(::notice)
+        id: stylegate
+        if: ${{ steps.secretgate.outcome == 'success' && !contains(github.event.head_commit.message, '[style-autofix]') && !contains(github.event.head_commit.message, '[style-gate]') }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          if [ ! -s "$RUNNER_TEMP/changed.txt" ]; then echo "沒有文章變動,略過。"; exit 0; fi
+          mapfile -t files < "$RUNNER_TEMP/changed.txt"
+          node .github/scripts/style-gate/gate.mjs --apply --only=terms,punct,lint "${files[@]}"
+
+      - name: ⓪c style-gate 結果 commit 回 main([style-gate])
+        if: ${{ steps.secretgate.outcome == 'success' && !contains(github.event.head_commit.message, '[style-autofix]') && !contains(github.event.head_commit.message, '[style-gate]') }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- posts; then echo "沒有要 commit 的變更。"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add posts
+          git commit -m "style-gate: 用詞/標點正規化 [style-gate]"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
       # 過渡期保險:訊息含 [style-autofix] 的 push(舊 webhook 版本留下的)不再校正/做影片。
       - name: ① 結構校正(style-autofix Worker)
         id: autofix
-        if: ${{ !contains(github.event.head_commit.message, '[style-autofix]') }}
+        if: ${{ !contains(github.event.head_commit.message, '[style-autofix]') && !contains(github.event.head_commit.message, '[style-gate]') }}
         continue-on-error: true
         env:
           WORKER_URL: ${{ secrets.AUTOFIX_WORKER_URL }}
@@ -75,7 +111,7 @@ jobs:
           git push origin HEAD:main
 
       - name: ② AI 影片(有 ai-video-made 標籤的變動文章)
-        if: ${{ !contains(github.event.head_commit.message, '[style-autofix]') }}
+        if: ${{ !contains(github.event.head_commit.message, '[style-autofix]') && !contains(github.event.head_commit.message, '[style-gate]') }}
         continue-on-error: true
         env:
           WORKER_URL: ${{ secrets.AI_VIDEO_WORKER_URL }}
@@ -104,7 +140,8 @@ jobs:
           done
 
       - name: ③ 通知站台佈署(repository_dispatch)
-        if: ${{ always() }}
+        # ①② 失敗不擋佈署,但 ⓪a 金鑰 fail-closed 失敗時不佈署(別讓含金鑰的內容上站)。
+        if: ${{ always() && steps.secretgate.outcome != 'failure' }}
         run: |
           curl -sf -X POST \
             -H "Accept: application/vnd.github+json" \
