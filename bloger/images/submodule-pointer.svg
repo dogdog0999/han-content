@@ -1,0 +1,41 @@
+<svg width="520" height="230" viewBox="0 0 520 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="submodule 下每多一篇文章,內容 repo 多一個 commit,主 repo 也得多一個更新指標的 commit">
+<defs>
+<marker id="smA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,1 L6.5,4 L0,7 z" fill="#3f6b4f"/></marker>
+<marker id="smG" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,1 L6.5,4 L0,7 z" fill="#b98a3e"/></marker>
+</defs>
+<rect x="0" y="0" width="520" height="230" rx="12" fill="#faf9f3"/>
+<g fill="none" stroke="#3f6b4f" stroke-width="1.5">
+<line x1="238" y1="65" x2="280" y2="65" marker-end="url(#smA)"/>
+<line x1="358" y1="65" x2="400" y2="65" marker-end="url(#smA)"/>
+<line x1="238" y1="175" x2="280" y2="175" marker-end="url(#smA)"/>
+<line x1="358" y1="175" x2="400" y2="175" marker-end="url(#smA)"/>
+<rect x="162" y="50" width="76" height="30" rx="6"/>
+<rect x="282" y="50" width="76" height="30" rx="6"/>
+<rect x="402" y="50" width="76" height="30" rx="6"/>
+<rect x="162" y="160" width="76" height="30" rx="6"/>
+<rect x="282" y="160" width="76" height="30" rx="6" stroke="#b98a3e" stroke-width="2"/>
+<rect x="402" y="160" width="76" height="30" rx="6" stroke="#b98a3e" stroke-width="2"/>
+<line x1="200" y1="158" x2="200" y2="83" marker-end="url(#smA)"/>
+<line x1="320" y1="158" x2="320" y2="83" stroke="#b98a3e" marker-end="url(#smG)"/>
+<line x1="440" y1="158" x2="440" y2="83" stroke="#b98a3e" marker-end="url(#smG)"/>
+</g>
+<g font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif" font-size="12" fill="#2b2f28" text-anchor="middle">
+<text x="200" y="40" fill="#5b6354">文章 A</text>
+<text x="320" y="40" fill="#5b6354">文章 B</text>
+<text x="440" y="40" fill="#5b6354">文章 C</text>
+<text x="200" y="69" font-family="ui-monospace,Consolas,monospace">a1b2c3</text>
+<text x="320" y="69" font-family="ui-monospace,Consolas,monospace">d4e5f6</text>
+<text x="440" y="69" font-family="ui-monospace,Consolas,monospace">f7a8b9</text>
+<text x="200" y="179" font-family="ui-monospace,Consolas,monospace">pin a1b2</text>
+<text x="320" y="179" font-family="ui-monospace,Consolas,monospace" fill="#b98a3e">pin d4e5</text>
+<text x="440" y="179" font-family="ui-monospace,Consolas,monospace" fill="#b98a3e">pin f7a8</text>
+<text x="200" y="211" fill="#5b6354">第一次掛上</text>
+<text x="320" y="211" fill="#b98a3e">更新指標</text>
+<text x="440" y="211" fill="#b98a3e">更新指標</text>
+<text x="208" y="125" text-anchor="start" fill="#5b6354">指向</text>
+<text x="14" y="62" text-anchor="start" font-size="13" font-weight="600">han-content</text>
+<text x="14" y="80" text-anchor="start" font-size="11" fill="#5b6354">只有文章</text>
+<text x="14" y="172" text-anchor="start" font-size="13" font-weight="600">vps-blogger</text>
+<text x="14" y="190" text-anchor="start" font-size="11" fill="#5b6354">主 repo</text>
+</g>
+</svg>

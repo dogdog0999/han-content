@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 560" font-family="system-ui, 'Noto Sans TC', sans-serif" font-size="14">
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#3f6b4f"/></marker>
+    <marker id="y" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#b98a3e"/></marker>
+  </defs>
+  <rect width="860" height="560" rx="12" fill="#f1f0e6"/>
+
+  <!-- top row -->
+  <rect x="16" y="30" width="140" height="80" rx="8" fill="#fff" stroke="#3f6b4f"/>
+  <text x="86" y="64" text-anchor="middle" fill="#2b2b2b" font-size="13">自由 HTML、MD 檔</text>
+  <text x="86" y="84" text-anchor="middle" fill="#777" font-size="12">AI 產的、隨手貼的</text>
+  <path d="M156 70H192" stroke="#3f6b4f" stroke-width="1.8" marker-end="url(#g)"/>
+
+  <rect x="196" y="30" width="130" height="80" rx="8" fill="#fff" stroke="#3f6b4f"/>
+  <text x="261" y="76" text-anchor="middle" fill="#2b2b2b">push 到 main</text>
+  <path d="M326 70H362" stroke="#3f6b4f" stroke-width="1.8" marker-end="url(#g)"/>
+
+  <rect x="366" y="30" width="270" height="80" rx="8" fill="#3f6b4f"/>
+  <text x="501" y="60" text-anchor="middle" fill="#f1f0e6" font-weight="700">GitHub Actions 建置部署</text>
+  <text x="501" y="82" text-anchor="middle" fill="#f1f0e6" font-size="12">Layer 1 清理 · Layer 2 檢查</text>
+  <text x="501" y="100" text-anchor="middle" fill="#f1f0e6" font-size="12">一定會跑 · 擋 XSS</text>
+  <path d="M636 70H672" stroke="#3f6b4f" stroke-width="1.8" marker-end="url(#g)"/>
+
+  <rect x="676" y="30" width="150" height="80" rx="8" fill="#fff" stroke="#3f6b4f"/>
+  <text x="751" y="64" text-anchor="middle" fill="#2b2b2b">上線</text>
+  <text x="751" y="84" text-anchor="middle" fill="#777" font-size="12">乾淨的 .c-prose 頁面</text>
+
+  <!-- webhook down -->
+  <path d="M261 110V170" stroke="#b98a3e" stroke-width="1.8" marker-end="url(#y)"/>
+  <text x="271" y="146" fill="#b98a3e" font-size="12">GitHub webhook 通知</text>
+
+  <!-- commit back up -->
+  <path d="M501 170V110" stroke="#b98a3e" stroke-width="1.8" marker-end="url(#y)"/>
+  <text x="511" y="134" fill="#b98a3e" font-size="12">校正版 commit 回 repo</text>
+  <text x="511" y="150" fill="#b98a3e" font-size="12">[style-autofix] → 再建置一次</text>
+
+  <!-- AI box -->
+  <rect x="196" y="170" width="440" height="84" rx="8" fill="#b98a3e"/>
+  <text x="416" y="202" text-anchor="middle" fill="#fff" font-weight="700" font-size="16">AI 校正在這裡</text>
+  <text x="416" y="225" text-anchor="middle" fill="#fff" font-size="13">Layer 3 · Cloudflare Worker</text>
+  <text x="416" y="243" text-anchor="middle" fill="#fff" font-size="12">只改格式、不改字 · AI 算力不吃 GitHub 的 CI 分鐘</text>
+
+  <path d="M416 254V300" stroke="#b98a3e" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#y)"/>
+  <text x="428" y="283" fill="#b98a3e" font-size="12">展開來看</text>
+
+  <!-- detail -->
+  <rect x="16" y="300" width="828" height="246" rx="10" fill="#fbf7ec" stroke="#b98a3e" stroke-dasharray="6 5"/>
+  <text x="32" y="326" fill="#b98a3e" font-weight="700">Worker 裡實際發生的事</text>
+
+  <rect x="32" y="344" width="180" height="104" rx="8" fill="#fff" stroke="#b98a3e"/>
+  <text x="122" y="368" text-anchor="middle" fill="#b98a3e" font-weight="600">① 驗簽、挑文章</text>
+  <text x="122" y="392" text-anchor="middle" fill="#555" font-size="12">驗 HMAC 簽章</text>
+  <text x="122" y="410" text-anchor="middle" fill="#555" font-size="12">跳過 [style-autofix]</text>
+  <text x="122" y="428" text-anchor="middle" fill="#555" font-size="12">略過 isoPage</text>
+  <path d="M212 396H236" stroke="#b98a3e" stroke-width="1.8" marker-end="url(#y)"/>
+
+  <rect x="240" y="344" width="180" height="104" rx="8" fill="#b98a3e"/>
+  <text x="330" y="368" text-anchor="middle" fill="#fff" font-weight="700">② AI 整理格式</text>
+  <text x="330" y="392" text-anchor="middle" fill="#fff" font-size="12">NVIDIA chat 端點</text>
+  <text x="330" y="410" text-anchor="middle" fill="#fff" font-size="12">標題階層、分段、強調</text>
+  <text x="330" y="428" text-anchor="middle" fill="#fff" font-size="12">frontmatter 不送進模型</text>
+  <path d="M420 396H444" stroke="#b98a3e" stroke-width="1.8" marker-end="url(#y)"/>
+
+  <rect x="448" y="344" width="180" height="104" rx="8" fill="#fff" stroke="#b98a3e"/>
+  <text x="538" y="368" text-anchor="middle" fill="#b98a3e" font-weight="600">③ 防呆:比文字</text>
+  <text x="538" y="392" text-anchor="middle" fill="#555" font-size="12">可見文字逐字相同?</text>
+  <text x="538" y="410" text-anchor="middle" fill="#555" font-size="12">差一個字就退回原文</text>
+  <path d="M628 396H652" stroke="#b98a3e" stroke-width="1.8" marker-end="url(#y)"/>
+
+  <rect x="656" y="344" width="172" height="104" rx="8" fill="#fff" stroke="#b98a3e"/>
+  <text x="742" y="368" text-anchor="middle" fill="#b98a3e" font-weight="600">④ 淨化、commit</text>
+  <text x="742" y="392" text-anchor="middle" fill="#555" font-size="12">同一份 allowlist 淨化</text>
+  <text x="742" y="410" text-anchor="middle" fill="#555" font-size="12">再比一次文字</text>
+  <text x="742" y="428" text-anchor="middle" fill="#555" font-size="12">有變動才 commit</text>
+
+  <text x="32" y="486" fill="#555" font-size="13">→ 全部通過:校正版 commit 回 repo,Actions 再建置一次</text>
+  <text x="32" y="508" fill="#555" font-size="13">→ 任何一步有疑慮:不 commit,原文留著,Layer 1 照樣把上線的頁面清乾淨</text>
+</svg>

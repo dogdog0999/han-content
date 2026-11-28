@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" width="720" height="430" font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect x="0" y="0" width="720" height="430" rx="20" fill="#faf9f3"/>
+
+  <defs>
+    <marker id="aGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3f6b4f"/>
+    </marker>
+    <marker id="aGrey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8f82"/>
+    </marker>
+    <marker id="aGold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b98a3e"/>
+    </marker>
+  </defs>
+
+  <!-- 文章進來 -->
+  <text x="24" y="60" font-size="12.5" font-weight="700" fill="#5b6354">一篇文章送出前 →</text>
+
+  <!-- 主流程:越往右,能處理的越少,才輪到 AI -->
+  <!-- Lane A 機械校正 -->
+  <rect x="24" y="92" width="196" height="104" rx="12" fill="#eef3ee" stroke="#3f6b4f" stroke-width="1.6"/>
+  <text x="122" y="120" text-anchor="middle" font-size="13.5" font-weight="700" fill="#3f6b4f">Lane A 機械校正</text>
+  <text x="122" y="142" text-anchor="middle" font-size="11" fill="#232a1e">用詞 · 標點 · 金鑰</text>
+  <text x="122" y="164" text-anchor="middle" font-size="10" fill="#5b6354">deterministic,不燒 AI</text>
+  <text x="122" y="181" text-anchor="middle" font-size="10" fill="#5b6354">自動套用 / 擋下</text>
+
+  <!-- Lane B 偵測 -->
+  <rect x="268" y="100" width="168" height="88" rx="12" fill="#eef3ee" stroke="#3f6b4f" stroke-width="1.6"/>
+  <text x="352" y="128" text-anchor="middle" font-size="13" font-weight="700" fill="#3f6b4f">Lane B 偵測</text>
+  <text x="352" y="149" text-anchor="middle" font-size="10" fill="#232a1e">排比 · 浮誇 · 絕對口吻 · 段落</text>
+  <text x="352" y="167" text-anchor="middle" font-size="10" fill="#5b6354">deterministic 偵測,只列建議</text>
+
+  <!-- AI + RAG(金色,刻意畫小:輪到它的最少)-->
+  <rect x="484" y="116" width="150" height="60" rx="12" fill="#b98a3e"/>
+  <text x="559" y="140" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">AI + RAG</text>
+  <text x="559" y="159" text-anchor="middle" font-size="9.5" fill="#f7eedd">/lint + few-shot,挑句</text>
+
+  <!-- 給人 -->
+  <text x="672" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#232a1e">給</text>
+  <text x="672" y="158" text-anchor="middle" font-size="11" font-weight="700" fill="#232a1e">人</text>
+
+  <!-- 流程箭頭(越右越細:能處理的越少) -->
+  <path d="M220,144 L266,144" fill="none" stroke="#3f6b4f" stroke-width="2.2" marker-end="url(#aGreen)"/>
+  <text x="243" y="136" text-anchor="middle" font-size="9" fill="#5b6354">多數已處理</text>
+
+  <path d="M436,144 L482,146" fill="none" stroke="#8a8f82" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#aGrey)"/>
+  <text x="459" y="132" text-anchor="middle" font-size="9" fill="#8a8f82">只剩要</text>
+  <text x="459" y="170" text-anchor="middle" font-size="9" fill="#8a8f82">語意判斷的</text>
+
+  <path d="M634,146 L662,146" fill="none" stroke="#b98a3e" stroke-width="1.6" marker-end="url(#aGold)"/>
+  <text x="648" y="138" text-anchor="middle" font-size="9" fill="#b98a3e">建議</text>
+
+  <!-- RAG 畢業回箭頭:AI 學到的 → 沉澱 → 變機械規則(綠),AI 地盤縮小 -->
+  <path d="M520,176 C470,250 230,250 150,198" fill="none" stroke="#b98a3e" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#aGold)"/>
+  <rect x="236" y="232" width="252" height="40" rx="9" fill="#f1f0e6" stroke="#b98a3e" stroke-width="1.2"/>
+  <text x="362" y="249" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8a6a2e">RAG 畢業</text>
+  <text x="362" y="265" text-anchor="middle" font-size="9.5" fill="#5b6354">反覆接受 → 沉澱成例子 → 變機械規則</text>
+
+  <!-- 一句話 -->
+  <text x="360" y="320" text-anchor="middle" font-size="12" font-weight="700" fill="#3f6b4f">能機械做的先做掉,AI 只在真的要判斷時上場</text>
+  <text x="360" y="342" text-anchor="middle" font-size="10.5" fill="#5b6354">AI 學會的沉澱成規則後,往右走到金色那塊的會越來越少</text>
+
+  <!-- 底部小註:不變量 -->
+  <text x="360" y="388" text-anchor="middle" font-size="9.5" fill="#8a8f82">Lane A 守「只動白名單 / 不改字」;Lane B 與 AI 永遠只建議,不自動改字</text>
+</svg>

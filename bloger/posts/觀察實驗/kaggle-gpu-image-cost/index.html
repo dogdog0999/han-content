@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>免費 Kaggle GPU 生圖：10 張只要 6 分鐘，貴在別的地方 · HAN</title><meta name="description" content="想幫 AI 影片生一批三國素材，試了「免費 Kaggle GPU + 可商用模型」。生圖本身很快，但真正的成本不在生圖那 6 分鐘。"><link rel="icon" type="image/svg+xml" href="/bloger/assets/logo.svg"><link rel="stylesheet" href="/bloger/_astro/fonts.BlQv7AGf.css"><link rel="stylesheet" href="/bloger/_astro/BlogLayout.3LlZTs1w.css"></head><body><a class="c-skip" href="#main">跳到主要內容</a><header class="c-masthead"><div class="c-masthead__inner"><a class="c-brand" href="/bloger/"><img class="c-brand__mark" src="/bloger/assets/logo.svg" width="36" height="36" alt="HAN logo"><span class="c-brand__name">HAN</span></a><div class="c-right"><button class="c-burger" type="button" aria-label="選單" aria-controls="mobmenu" aria-expanded="false" data-burger><span class="c-burger__box" aria-hidden="true"><span></span><span></span><span></span></span></button><nav class="c-nav"><div class="c-menu"><button class="c-nav__link c-menu__btn" type="button" data-menu aria-haspopup="true" aria-expanded="false">分類<svg class="c-menu__chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div class="c-menu__panel" role="menu"><a class="c-menu__item" href="/bloger/topics/架構筆記/" role="menuitem"><span>架構筆記</span><span class="c-menu__n">11</span></a><a class="c-menu__item" href="/bloger/topics/觀察實驗/" role="menuitem"><span>觀察實驗</span><span class="c-menu__n">2</span></a></div></div><div class="c-menu"><button class="c-nav__link c-menu__btn" type="button" data-menu aria-haspopup="true" aria-expanded="false">標籤<svg class="c-menu__chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div class="c-menu__panel c-menu__panel--tags" role="menu"><div class="c-menu__search"><svg class="c-menu__search-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><input class="c-menu__search-input" type="search" placeholder="搜尋標籤…" aria-label="搜尋標籤" data-tag-filter></div><div class="c-menu__list"><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/ai/" data-tag-name="AI" role="menuitem">#AI</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/ci-cd/" data-tag-name="CI/CD" role="menuitem">#CI/CD</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/cloudflare-workers/" data-tag-name="Cloudflare Workers" role="menuitem">#Cloudflare Workers</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/side-project/" data-tag-name="side project" role="menuitem">#side project</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/github-actions/" data-tag-name="GitHub Actions" role="menuitem">#GitHub Actions</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/影片生成/" data-tag-name="影片生成" role="menuitem">#影片生成</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/自動化/" data-tag-name="自動化" role="menuitem">#自動化</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/rag/" data-tag-name="RAG" role="menuitem">#RAG</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/cloudflare/" data-tag-name="Cloudflare" role="menuitem">#Cloudflare</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/成本/" data-tag-name="成本" role="menuitem">#成本</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/webhook/" data-tag-name="Webhook" role="menuitem">#Webhook</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/secrets-store/" data-tag-name="Secrets Store" role="menuitem">#Secrets Store</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/設定管理/" data-tag-name="設定管理" role="menuitem">#設定管理</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/機密管理/" data-tag-name="機密管理" role="menuitem">#機密管理</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/生圖/" data-tag-name="生圖" role="menuitem">#生圖</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/flux/" data-tag-name="FLUX" role="menuitem">#FLUX</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/prompt/" data-tag-name="prompt" role="menuitem">#prompt</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/分鏡/" data-tag-name="分鏡" role="menuitem">#分鏡</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/kaggle/" data-tag-name="Kaggle" role="menuitem">#Kaggle</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/gpu/" data-tag-name="GPU" role="menuitem">#GPU</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/sdxl/" data-tag-name="SDXL" role="menuitem">#SDXL</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/remotion/" data-tag-name="Remotion" role="menuitem">#Remotion</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/repository_dispatch/" data-tag-name="repository_dispatch" role="menuitem">#repository_dispatch</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/github-pages/" data-tag-name="GitHub Pages" role="menuitem">#GitHub Pages</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/duckdns/" data-tag-name="DuckDNS" role="menuitem">#DuckDNS</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/架構/" data-tag-name="架構" role="menuitem">#架構</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/text-to-speech/" data-tag-name="Text-to-Speech" role="menuitem">#Text-to-Speech</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/github-api/" data-tag-name="GitHub API" role="menuitem">#GitHub API</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/rehype/" data-tag-name="rehype" role="menuitem">#rehype</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/edge-function/" data-tag-name="Edge Function" role="menuitem">#Edge Function</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/xss/" data-tag-name="XSS" role="menuitem">#XSS</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/搜尋/" data-tag-name="搜尋" role="menuitem">#搜尋</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/搜尋向量化/" data-tag-name="搜尋向量化" role="menuitem">#搜尋向量化</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/embedding/" data-tag-name="embedding" role="menuitem">#embedding</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/serverless/" data-tag-name="serverless" role="menuitem">#serverless</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/edge-computing/" data-tag-name="Edge Computing" role="menuitem">#Edge Computing</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/nvidia/" data-tag-name="NVIDIA" role="menuitem">#NVIDIA</a><a class="c-menu__item c-menu__item--tag" href="/bloger/tags/ai-video-made/" data-tag-name="ai-video-made" role="menuitem">#ai-video-made</a><div class="c-menu__empty" data-tag-empty hidden>找不到符合的標籤</div></div></div></div><a class="c-nav__link" href="#about">關於</a></nav><div class="c-headsearch"><form class="c-search" data-endpoint="https://han-search.dogr2487.workers.dev" role="search"><button type="button" class="c-search__toggle" aria-label="搜尋" aria-expanded="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button><input class="c-search__input" type="search" placeholder="搜尋…" aria-label="搜尋文章"></form><div class="c-search__results" aria-live="polite"></div></div></div></div><nav id="mobmenu" class="c-mobmenu" data-mobmenu aria-label="主選單"><span class="c-mobmenu__label">分類</span><a class="c-mobmenu__item" href="/bloger/topics/架構筆記/"><span>架構筆記</span><span class="c-mobmenu__n">11</span></a><a class="c-mobmenu__item" href="/bloger/topics/觀察實驗/"><span>觀察實驗</span><span class="c-mobmenu__n">2</span></a><span class="c-mobmenu__label">更多</span><a class="c-mobmenu__item c-mobmenu__item--plain" href="/bloger/tags/">所有標籤</a><a class="c-mobmenu__item c-mobmenu__item--plain" href="#about">關於</a></nav></header><main id="main" tabindex="-1"><div class="c-progress" data-progress aria-hidden="true"><span class="c-progress__fill"></span></div><div class="l-read"><article class="c-article"><nav class="c-crumb" aria-label="路徑"><a class="c-crumb__link" href="/bloger/topics/">所有主題</a><span class="c-crumb__sep" aria-hidden="true">›</span><a class="c-crumb__link" href="/bloger/topics/觀察實驗/">觀察實驗</a></nav><nav class="c-pagerline c-pagerline--top" aria-label="文章導覽"><a class="c-pagerline__link" href="/bloger/posts/觀察實驗/remotion-render-cost/">← 上一篇</a><span class="c-pagerline__sep" aria-hidden="true"></span><a class="c-pagerline__link c-pagerline__home" href="/bloger/">首頁</a><span class="c-pagerline__sep" aria-hidden="true"></span><a class="c-pagerline__link" href="/bloger/posts/架構筆記/ai-video-script-storytelling/">下一篇 →</a></nav><header class="c-article__head"><h1 class="c-article__title">免費 Kaggle GPU 生圖：10 張只要 6 分鐘，貴在別的地方</h1><div class="c-article__meta"><a class="c-article__cat" href="/bloger/topics/觀察實驗/">觀察實驗</a> · 2026/11/26 · 約 1100 字 · 閱讀約 4 分鐘<span class="c-media" title="含影音" role="img" aria-label="含影音"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"></rect><path d="M10.2 9.3l4.6 2.7-4.6 2.7z" fill="currentColor" stroke="none"></path></svg></span></div><div class="c-article__tags"><a class="c-tag" href="/bloger/tags/kaggle/">#Kaggle</a><a class="c-tag" href="/bloger/tags/gpu/">#GPU</a><a class="c-tag" href="/bloger/tags/sdxl/">#SDXL</a><a class="c-tag" href="/bloger/tags/影片生成/">#影片生成</a><a class="c-tag" href="/bloger/tags/成本/">#成本</a><a class="c-tag" href="/bloger/tags/side-project/">#side project</a></div></header><div class="c-prose"><p>AI 影片裡偶爾要一張沒有版權疑慮的配圖——三國人物、場景之類。與其找圖，我試試能不能用<strong>免費的 Kaggle GPU，配可商用的模型</strong>直接生。</p>
+<p>結論是：生得出來，而且很快。</p>
+<figure>
+  <img src="/bloger/images/kaggle-gpu-image-cost/kaggle-result-guanyu.jpg" alt="SDXL 生成的三國武將圖（關羽、張飛）">
+  <figcaption>SDXL 直接生出來的三國武將，檔名都帶 seed，方便複現。</figcaption>
+</figure>
+<p>用 SDXL base 1.0，單張 30 步實測 <strong>31～34 秒</strong>（T4 上大約 1 秒跑一步）；加上模型搬移、VAE 解碼、存檔，單張大概 35 秒。
+<strong>10 張三國人物，從按下執行到「characters done: 10」約 6 分鐘。</strong></p>
+<figure>
+  <img src="/bloger/images/kaggle-gpu-image-cost/kaggle-characters-done.jpg" alt="notebook 輸出 saved …10_simayi_seed2110.png / characters done: 10">
+  <figcaption>notebook 跑完的結果：最後一張存檔、印出「characters done: 10」。</figcaption>
+</figure>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>時間</th>
+<th>來源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>單張 SDXL（30 步）</td>
+<td>31–34 秒</td>
+<td>實測（步進條 ~1 s/it）</td>
+</tr>
+<tr>
+<td>單張 wall-clock（含搬移/解碼/存檔）</td>
+<td>~35 秒</td>
+<td>估</td>
+</tr>
+<tr>
+<td>10 張人物（執行→完成）</td>
+<td>~6 分鐘</td>
+<td>session 計時推估</td>
+</tr>
+<tr>
+<td>權重下載（7.11GB）</td>
+<td>~25–35 秒</td>
+<td>實測（283MB/s）</td>
+</tr>
+<tr>
+<td>環境初始化（排隊+裝套件+載入）</td>
+<td>~3–5 分鐘</td>
+<td>估</td>
+</tr>
+<tr>
+<td>本週消耗 quota</td>
+<td>47 分 / 30 小時</td>
+<td>實測（面板）</td>
+</tr>
+<tr>
+<td>↳ 其中「有效生圖」</td>
+<td>~15 分</td>
+<td>估</td>
+</tr>
+<tr>
+<td>搭環境、載入模型那段的過程大概長這樣：</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<figure>
+  <img src="/bloger/images/kaggle-gpu-image-cost/kaggle-gpu-smi.jpg" alt="nvidia-smi 顯示 2 張 Tesla T4">
+  <figcaption>① 開場 nvidia-smi 確認：拿到 2× Tesla T4（各 15GB）。</figcaption>
+</figure>
+<figure>
+  <img src="/bloger/images/kaggle-gpu-image-cost/kaggle-download.jpg" alt="下載 7.11GB 權重，以及 diffusers 報錯">
+  <figcaption>② 下載 7.11GB 權重（283MB/s）；紅色那段是 diffusers 改版、enable_vae_slicing() 被拿掉噴的錯。</figcaption>
+</figure>
+<figure>
+  <img src="/bloger/images/kaggle-gpu-image-cost/kaggle-sdxl-loaded.jpg" alt="改用 vae.enable_slicing() 後成功載入 SDXL">
+  <figcaption>③ 改成 vae.enable_slicing() 才跑得動：印出「SDXL loaded on Tesla T4」。</figcaption>
+</figure>
+<blockquote>
+<p>中文字我乾脆不讓模型畫（用 negative prompt 擋掉，不然都是亂碼），標題之後再用 SVG 疊上去。</p>
+</blockquote>
+<h2 id="kaggle-gpu-有免費額度限制">Kaggle GPU 有免費額度限制</h2>
+<p>Kaggle 的 GPU 額度是<strong>每週 30 小時、session 開著就計</strong>，閒置也算。我停掉前面板顯示 <code>00:47 / 30 hrs</code>——這次花了 47 分鐘。</p>
+<figure>
+  <img src="/bloger/images/kaggle-gpu-image-cost/kaggle-quota.jpg" alt="Kaggle session 右側額度面板">
+  <figcaption>右側面板的額度：截圖時 00:43 / 30 hrs（停掉前到 47 分）；生圖只佔其中一小段。</figcaption>
+</figure>
+<p><strong>真正在生圖的，大概只有 15 分鐘。</strong> 其餘 32 分花在：GPU 排隊啟動、裝套件、下載並載入 <strong>7.11GB</strong> 的 SDXL 權重（還下了兩次，因為中途 Stop 重來），以及我把流程跑亂後的反覆重試。這段就是<strong>沉沒成本</strong>——燒掉了額度，沒換到一張圖。</p>
+<p>機會成本也在這裡：每週就 30 小時，花在搭環境的每一分鐘，都是少掉的生圖額度。</p>
+<figure>
+  <img src="/bloger/images/kaggle-gpu-image-cost/kaggle-30h-official.jpg" alt="Kaggle Accelerator 對話框，寫明每週 30 小時上限">
+  <figcaption>Kaggle 官方寫得很白：「Availability is limited to 30 hours per week.」開 GPU 前就會跳這個。</figcaption>
+</figure>
+<h2 id="踩到的坑">踩到的坑</h2>
+<ul>
+<li><strong>採坑</strong>：反覆重載 SDXL，把 16GB 記憶體吃爆（CUDA OOM），重啟核心還不釋放，得整個 Stop session、改用 <code>enable_model_cpu_offload()</code> 才解。</li>
+<li></li>
+<li><strong>真的是環境的</strong>：<code>diffusers</code> 改版把 <code>enable_vae_slicing()</code> 拿掉了，直接噴錯，得改成 <code>vae.enable_slicing()</code>；還有第一個帳號沒做手機／身分驗證，GPU 跟 Internet 被鎖，換到驗證過的帳號重來。</li>
+</ul>
+<h2 id="外部風險才是免費的真正代價">外部風險，才是免費的真正代價</h2>
+<p>免費方案省的是錢，付的是<strong>不可控</strong>：</p>
+<ul>
+<li>Stop session 後 <code>/kaggle/working</code> 直接清空，那批圖只剩我先下載的 zip——<strong>沒存下來就得整套重生</strong>。</li>
+<li>單次 session 上限約 12 小時，閒置 20～40 分自動停；要開 GPU 還得過身分驗證。</li>
+<li>規則哪天一改、額度哪天縮，整條路就斷了。</li>
+</ul>
+<p>這次是驗證可行，不是長期產線。之後若要穩定產，可以把生圖搬回 Cloudflare 技術棧（Workers AI 內建 flux-schnell，照官方公式估免費約每天 57 張）——下面那張 10 人 grid 就是用它生的。</p>
+<p>用到的模型與授權：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>授權</th>
+<th>這次用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SDXL base 1.0</td>
+<td>CreativeML OpenRAIL++-M（可商用）</td>
+<td>實際生圖</td>
+</tr>
+<tr>
+<td>FLUX.1-schnell</td>
+<td>Apache-2.0（可商用）</td>
+<td>選配，沒實跑</td>
+</tr>
+<tr>
+<td>FLUX.1-dev</td>
+<td>非商用</td>
+<td>明確避開</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10張三國腳色">10張三國腳色</h2>
+<p>下面這張 10 位的 grid，<strong>不是上面那套 Kaggle SDXL，而是用另一條免費路——Cloudflare Workers AI 的 FLUX-schnell 生的</strong>（Kaggle 那批檔案沒留住，改用這條補生）。剛好當兩條免費路的對照。</p>
+<figure>
+  <img src="/bloger/images/kaggle-gpu-image-cost/kaggle-characters-grid.jpg" alt="10 位三國人物的 grid：關羽、張飛、趙雲、呂布、諸葛亮、劉備、曹操、孫權、周瑜、司馬懿">
+  <figcaption>關羽、張飛、趙雲、呂布、諸葛亮、劉備、曹操、孫權、周瑜、司馬懿。角色圖是 Workers AI（FLUX-schnell）生的、中文名牌事後用程式疊——畫面本身沒讓模型寫字。</figcaption>
+</figure>
+<p>順手也用這 10 位做了支動態開場（Remotion 串的，每位依序登場）：</p>
+<figure>
+  <video src="/bloger/images/kaggle-gpu-image-cost/sanguo-intro-web.mp4" controls muted playsinline preload="metadata"></video>
+  <figcaption>10 位依序登場的無聲開場（關羽→…→司馬懿）。Remotion 做的，角色圖是 Workers AI 生的、中文名一樣是 Remotion 事後疊、沒讓模型寫字。</figcaption>
+</figure></div><nav class="c-pagerline c-pagerline--foot" aria-label="文章導覽"><a class="c-pagerline__link" href="/bloger/posts/觀察實驗/remotion-render-cost/">← 上一篇</a><span class="c-pagerline__sep" aria-hidden="true"></span><a class="c-pagerline__link c-pagerline__home" href="/bloger/">首頁</a><span class="c-pagerline__sep" aria-hidden="true"></span><a class="c-pagerline__link" href="/bloger/posts/架構筆記/ai-video-script-storytelling/">下一篇 →</a></nav></article><aside class="c-toc" aria-label="本頁目錄"><div class="c-toc__inner"><p class="c-toc__label">本頁目錄</p><ul class="c-toc__list"><li><a class="c-toc__link" href="#kaggle-gpu-有免費額度限制" data-toc="kaggle-gpu-有免費額度限制">Kaggle GPU 有免費額度限制</a></li><li><a class="c-toc__link" href="#踩到的坑" data-toc="踩到的坑">踩到的坑</a></li><li><a class="c-toc__link" href="#外部風險才是免費的真正代價" data-toc="外部風險才是免費的真正代價">外部風險，才是免費的真正代價</a></li><li><a class="c-toc__link" href="#10張三國腳色" data-toc="10張三國腳色">10張三國腳色</a></li></ul></div></aside></div></main><footer class="c-footer" id="about"><div class="l-wrap"><div class="c-footer__top"><div class="c-footer__about"><div class="c-footer__brand">HAN</div><p class="c-footer__blurb">嗨，我是 dogdog0999。喜歡把東西做出來，也喜歡把過程寫下來 —— 這裡記錄程式、設計與日常之間的觀察。</p></div><div class="c-footer__explore" id="tags"><h3 class="c-footer__h">用標籤逛</h3><div class="c-footer__taglist"><a href="/bloger/tags/ai/">#AI</a><a href="/bloger/tags/ci-cd/">#CI/CD</a><a href="/bloger/tags/cloudflare-workers/">#Cloudflare Workers</a><a href="/bloger/tags/side-project/">#side project</a><a href="/bloger/tags/github-actions/">#GitHub Actions</a><a href="/bloger/tags/影片生成/">#影片生成</a><a href="/bloger/tags/自動化/">#自動化</a><a href="/bloger/tags/cloudflare/">#Cloudflare</a><a class="c-footer__taglist-all" href="/bloger/tags/">所有標籤 →</a></div></div></div><div class="c-footer__bottom"><div class="c-footer__copy">© 2026 dogdog0999 · dogr2487@gmail.com</div></div></div></footer><div class="c-kbd" aria-hidden="true"><div class="c-kbd__panel" role="dialog" aria-label="鍵盤快捷鍵"><h3>鍵盤快捷鍵</h3><div class="c-kbd__row"><span>聚焦搜尋</span><span class="c-kbd__keys"><kbd class="c-kbd__key">/</kbd></span></div><div class="c-kbd__row"><span>分類列 / 清單移動</span><span class="c-kbd__keys"><kbd class="c-kbd__key">j</kbd><kbd class="c-kbd__key">k</kbd></span></div><div class="c-kbd__row"><span>滑動分類列 / 清單翻頁</span><span class="c-kbd__keys"><kbd class="c-kbd__key">←</kbd><kbd class="c-kbd__key">→</kbd></span></div><div class="c-kbd__row"><span>顯示 / 關閉說明</span><span class="c-kbd__keys"><kbd class="c-kbd__key">?</kbd><kbd class="c-kbd__key">Esc</kbd></span></div><button class="c-icon-btn" data-kbd-close aria-label="關閉" style="margin-top:16px;width:auto;padding:0 16px;height:34px;">關閉</button></div></div><button class="c-totop" type="button" aria-label="回到頂端" data-totop><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="6"></line><polyline points="6 12 12 6 18 12"></polyline></svg></button><script type="module" src="/bloger/_astro/BlogLayout.astro_astro_type_script_index_0_lang.1LjqKCiK.js"></script></body></html>

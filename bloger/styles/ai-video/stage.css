@@ -1,0 +1,123 @@
+/* ===== AI 影片 ③【舞台 stage】 =====
+   一幕一幕的內容:八種版面 + 疊加(章節軸/貼紙/名條)+ 關鍵字上色 + 進場變化。
+   三工具箱之一(另有 ①chrome、②screen)。對應 src/scripts/ai-video/scenes.js、frame.js 的渲染/動畫。
+   namespace:.c-aiv__img / __quote / __hero / __text / __th / __tl / __term* / __oneline / __kw
+     / __chapters / __chip / __sticker / __stat* / __split* / __lower / scene.enter-*。
+   註:enter-* 疊在 ②screen 的 .c-aiv__scene 上(交界),載入順序要在 screen 之後,動畫才蓋得過 is-in。 */
+.c-aiv__img { width: 100%; height: 100%; object-fit: contain; }
+
+/* 字卡:黑底白字一句話置中 */
+.c-aiv__quote { position: absolute; inset: 0; display: grid; place-items: center; padding: 60px 140px;
+  color: #fff; font-family: var(--font-serif); font-weight: 700; text-align: center; line-height: 1.4;
+  font-size: 76px; letter-spacing: .01em; text-shadow: 0 2px 20px rgba(0,0,0,.5); }
+/* 大字卡=強調幕:深底白字,一句話一個 group 撐滿整幕(字級由 JS 在固定舞台裡算一次)*/
+.c-aiv__hero { position: absolute; inset: 0; display: grid; place-items: center; padding: 40px 90px;
+  background: radial-gradient(135% 110% at 50% 0%, #26332a, #141310); color: #fff; font-family: var(--font-serif); font-weight: 700;
+  text-align: center; line-height: 1.2; letter-spacing: .01em; overflow: hidden; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.5); }
+/* 片頭封面(標題卡):深底、金色小標 + 大標題(字級由 JS 在固定舞台裡算一次)+ 一行主線 */
+.c-aiv__cover { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 30px; padding: 40px 90px; text-align: center; overflow: hidden;
+  background: radial-gradient(135% 120% at 50% 0%, #2a3a2e, #141310); color: #fff; }
+.c-aiv__cover-ey { font-family: var(--font-sans, sans-serif); font-weight: 600; font-size: 30px; letter-spacing: .34em; color: #e9c77e; padding-left: .34em; }
+.c-aiv__cover-ey::after { content: ""; display: block; width: 64px; height: 3px; border-radius: 2px; background: #b98a3e; margin: 18px auto 0; }
+.c-aiv__cover-title { width: 100%; font-family: var(--font-serif); font-weight: 800; line-height: 1.16; letter-spacing: .01em; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.5); }
+.c-aiv__cover-sub { font-size: 32px; line-height: 1.5; color: #b8bcae; max-width: 78%; }
+/* 文字頁 */
+.c-aiv__text { position: absolute; inset: 0; padding: 70px 120px; display: flex; flex-direction: column; justify-content: center; gap: 24px;
+  background: radial-gradient(130% 90% at 100% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%), var(--paper); }
+.c-aiv__th { font-family: var(--font-serif); font-weight: 700; font-size: 60px; color: var(--accent-d); margin: 0; line-height: 1.25; }
+.c-aiv__tl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+.c-aiv__tl li { position: relative; padding-left: 36px; font-size: 40px; line-height: 1.5; color: var(--ink); }
+.c-aiv__tl li::before { content: ""; position: absolute; left: 4px; top: .62em; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); }
+/* 名詞卡 */
+.c-aiv__term2 { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 22px; padding: 80px 130px; background: var(--paper); }
+.c-aiv__term-name { font-family: var(--font-serif); font-weight: 700; color: var(--accent-d); font-size: 118px; line-height: 1.05; }
+.c-aiv__term-en { color: var(--gold, var(--accent)); font-weight: 600; letter-spacing: .06em; font-size: 44px; }
+.c-aiv__term-def { margin-top: 10px; padding: 24px 28px; border-left: 8px solid var(--accent); border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--paper)); color: var(--ink); font-size: 40px; line-height: 1.5; }
+.c-aiv__term-def span { display: inline-block; margin-right: 14px; font-weight: 700; font-size: .72em; color: var(--accent-d);
+  background: color-mix(in srgb, var(--accent) 18%, var(--paper)); padding: 2px 16px; border-radius: 30px; }
+.c-aiv__term-plain { color: var(--ink); font-size: 52px; font-weight: 600; line-height: 1.45; }
+/* 整句包成一個 object(grid 裡只有這一個子項,文字+關鍵字不會被拆成兩列)*/
+.c-aiv__oneline { display: inline-block; max-width: 100%; }
+.c-aiv__hero .c-aiv__oneline { white-space: nowrap; }   /* 大字卡永遠一行 */
+/* 關鍵字金色 */
+.c-aiv__kw { color: var(--gold, #b98a3e); font-weight: 800; }
+.c-aiv__quote .c-aiv__kw, .c-aiv__hero .c-aiv__kw { color: #e9c77e; }
+/* 章節軸:浮標浮在內容上緣(整台等比縮放一起變);到最後一章就淡出 */
+.c-aiv__chapters { position: absolute; top: 20px; left: 0; right: 0; z-index: 3; display: flex; justify-content: center; gap: 12px;
+  padding: 0 24px; background: none; pointer-events: none; transition: opacity .4s var(--ease); }
+.c-aiv__chapters.is-gone { opacity: 0; }
+.c-aiv__chip { font-size: 26px; color: var(--accent-d); background: color-mix(in srgb, var(--accent) 9%, #fff);
+  border: 2px solid color-mix(in srgb, var(--accent) 24%, transparent); border-radius: 30px;
+  padding: 6px 20px 6px 10px; display: inline-flex; align-items: center; gap: 10px; opacity: .9; box-shadow: 0 2px 6px rgba(35,42,30,.12); }
+.c-aiv__chip b { width: 30px; height: 30px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 20%, #fff); color: var(--accent-d);
+  display: inline-grid; place-items: center; font-size: .62em; font-weight: 700; }
+.c-aiv__chip.is-on { background: var(--accent); color: #fff; opacity: 1; border-color: var(--accent); }
+.c-aiv__chip.is-on b { background: var(--gold, #b98a3e); color: #fff; }
+/* 貼紙:固定舞台座標,跟 hero 一起構圖;punchline 那刻才彈 */
+.c-aiv__sticker { position: absolute; left: 50%; bottom: 18%; z-index: 4;
+  transform: translateX(-50%) scale(.4) rotate(-5deg); opacity: 0;
+  transition: transform .42s cubic-bezier(.34,1.56,.64,1), opacity .25s var(--ease);
+  background: #b4453a; color: #fff; font-family: var(--font-serif); font-weight: 700; font-size: 52px;
+  padding: 14px 32px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.4); border: 3px solid #fff; white-space: nowrap; }
+.c-aiv__sticker.is-on { transform: translateX(-50%) scale(1) rotate(-5deg); opacity: 1; }
+/* 貼紙顏色(預設紅=punchline/警示;可選 green=主角/正面、gold=關鍵、ink=中性低調)*/
+.c-aiv__sticker.is-green { background: #3f6b4f; }
+.c-aiv__sticker.is-gold { background: #b98a3e; }
+.c-aiv__sticker.is-ink { background: #2b2f28; }
+
+/* 數字卡:深底,一個大數字 count-up(JS 逐幀把 0 數到目標)*/
+.c-aiv__stat { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 18px; padding: 60px 90px;
+  background: radial-gradient(135% 110% at 50% 0%, #26332a, #141310); color: #fff; text-align: center; }
+.c-aiv__stat-big { display: flex; align-items: baseline; gap: 14px; }
+.c-aiv__stat-num { font-family: var(--font-serif); font-weight: 800; font-size: 220px; line-height: 1; color: #e9c77e; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.c-aiv__stat-unit { font-family: var(--font-serif); font-weight: 700; font-size: 88px; color: #fff; }
+.c-aiv__stat-cap { font-size: 48px; font-weight: 600; color: #e8e6dc; max-width: 64%; line-height: 1.35; }
+.c-aiv__stat .c-aiv__kw { color: #e9c77e; }
+
+/* 雙欄:左圖(diagram/image)右字,同框對照 */
+.c-aiv__split { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 44px; padding: 60px 80px;
+  background: radial-gradient(130% 90% at 100% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%), var(--paper); }
+.c-aiv__split-l { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; }
+.c-aiv__split-r { display: flex; flex-direction: column; justify-content: center; gap: 20px; }
+.c-aiv__split-r .c-aiv__th { font-size: 50px; }
+.c-aiv__split-r .c-aiv__tl li { font-size: 34px; }
+
+/* 下方名條(lower-third):標出畫面上正在講的東西 */
+.c-aiv__lower { position: absolute; left: 56px; bottom: 116px; z-index: 4; display: inline-flex; align-items: center;
+  background: rgba(20,19,16,.82); color: #fff; font-family: var(--font-serif); font-weight: 600; font-size: 34px; line-height: 1.2;
+  padding: 12px 26px; border-radius: 8px; border-left: 6px solid var(--gold, #b98a3e); animation: aivLower .5s var(--ease) both; }
+@keyframes aivLower { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+/* 時間/數量填滿條:關鍵字配一條會「填滿」的進度條,把「過了多久/多遠」變成看得到的量(任何版面都可) */
+.c-aiv__timebar { position: absolute; left: 56px; right: 56px; bottom: 56px; z-index: 4; }
+.c-aiv__timebar-text { font-family: var(--font-serif); font-weight: 700; font-size: 32px; color: #fff; margin-bottom: 12px; }
+.c-aiv__timebar-track { height: 8px; max-width: 560px; background: rgba(241,240,230,.2); border-radius: 4px; overflow: hidden; }
+.c-aiv__timebar-fill { height: 100%; width: 0; background: var(--gold, #b98a3e); border-radius: 4px; }
+
+/* 進場變化(enter):fade=預設;slide/pop/type 讓換幕有不同節奏(疊在 scene 上,載入順序在 screen 之後才蓋得過 is-in)*/
+.c-aiv__scene.enter-slide { animation: aivSlide .5s var(--ease); }
+.c-aiv__scene.enter-pop { animation: aivPop .45s cubic-bezier(.34,1.56,.64,1); }
+.c-aiv__scene.enter-type { animation: aivWipe .6s var(--ease); }
+.c-aiv__scene.enter-bounce { animation: aivBounce .75s cubic-bezier(.215,.61,.355,1); }
+@keyframes aivSlide { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: none; } }
+@keyframes aivPop { from { opacity: 0; transform: scale(.88); } to { opacity: 1; transform: none; } }
+@keyframes aivWipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+/* animate.css 的 bounceIn 原版關鍵影格(remotion-showcase-techniques 讀碼時核對過) */
+@keyframes aivBounce {
+  0% { opacity: 0; transform: scale(.3); }
+  20% { transform: scale(1.1); }
+  40% { transform: scale(.9); }
+  60% { opacity: 1; transform: scale(1.03); }
+  80% { transform: scale(.97); }
+  100% { opacity: 1; transform: scale(1); }
+}
+/* 逐幀進場:scene 入場時,文字頁/雙欄的列表項一個個淡入上移(像簡報逐條出現)*/
+.c-aiv__scene.is-in .c-aiv__tl li { animation: aivItemIn .5s var(--ease) both; }
+.c-aiv__scene.is-in .c-aiv__tl li:nth-child(1) { animation-delay: .12s; }
+.c-aiv__scene.is-in .c-aiv__tl li:nth-child(2) { animation-delay: .30s; }
+.c-aiv__scene.is-in .c-aiv__tl li:nth-child(3) { animation-delay: .48s; }
+.c-aiv__scene.is-in .c-aiv__tl li:nth-child(4) { animation-delay: .66s; }
+.c-aiv__scene.is-in .c-aiv__tl li:nth-child(5) { animation-delay: .84s; }
+@keyframes aivItemIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }

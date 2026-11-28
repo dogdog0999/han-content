@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" font-family="system-ui, 'Noto Sans TC', sans-serif" font-size="14">
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#3f6b4f"/></marker>
+    <marker id="y" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#b98a3e"/></marker>
+  </defs>
+  <rect width="900" height="650" rx="12" fill="#f1f0e6"/>
+
+  <!-- lanes -->
+  <rect x="16" y="16" width="206" height="622" rx="8" fill="#fff" stroke="#ddd"/>
+  <rect x="238" y="16" width="206" height="622" rx="8" fill="#fff" stroke="#3f6b4f"/>
+  <rect x="460" y="16" width="206" height="622" rx="8" fill="#fbf7ec" stroke="#b98a3e"/>
+  <rect x="682" y="16" width="202" height="622" rx="8" fill="#fff" stroke="#ddd"/>
+  <text x="119" y="42" text-anchor="middle" fill="#555" font-weight="700">我</text>
+  <text x="341" y="42" text-anchor="middle" fill="#3f6b4f" font-weight="700">GitHub</text>
+  <text x="563" y="42" text-anchor="middle" fill="#b98a3e" font-weight="700">Cloudflare Worker</text>
+  <text x="783" y="42" text-anchor="middle" fill="#555" font-weight="700">NVIDIA</text>
+
+  <!-- step 1 -->
+  <rect x="34" y="68" width="170" height="56" rx="8" fill="#f1f0e6" stroke="#999"/>
+  <text x="119" y="92" text-anchor="middle" fill="#2b2b2b" font-weight="600">① push 文章</text>
+  <text x="119" y="111" text-anchor="middle" fill="#777" font-size="12">自由 HTML、MD 檔</text>
+  <path d="M204 96H230V164H256" fill="none" stroke="#3f6b4f" stroke-width="1.8" marker-end="url(#g)"/>
+
+  <!-- step 2 -->
+  <rect x="256" y="140" width="170" height="64" rx="8" fill="#f1f0e6" stroke="#3f6b4f"/>
+  <text x="341" y="164" text-anchor="middle" fill="#3f6b4f" font-weight="600">② 觸發 webhook</text>
+  <text x="341" y="183" text-anchor="middle" fill="#777" font-size="12">Actions 同時開始建置</text>
+  <path d="M426 172H452V250H478" fill="none" stroke="#b98a3e" stroke-width="1.8" marker-end="url(#y)"/>
+
+  <!-- step 3 -->
+  <rect x="478" y="226" width="170" height="64" rx="8" fill="#fff" stroke="#b98a3e"/>
+  <text x="563" y="250" text-anchor="middle" fill="#b98a3e" font-weight="600">③ 驗簽、挑文章</text>
+  <text x="563" y="269" text-anchor="middle" fill="#777" font-size="12">跳過 [style-autofix]</text>
+  <path d="M648 258H662V326H700" fill="none" stroke="#b98a3e" stroke-width="1.8" marker-end="url(#y)"/>
+
+  <!-- step 4 -->
+  <rect x="700" y="306" width="166" height="64" rx="8" fill="#b98a3e"/>
+  <text x="783" y="330" text-anchor="middle" fill="#fff" font-weight="700">④ AI 整理格式</text>
+  <text x="783" y="349" text-anchor="middle" fill="#fff" font-size="12">只改標題、分段、強調</text>
+  <path d="M700 354H688V422H648" fill="none" stroke="#b98a3e" stroke-width="1.8" marker-end="url(#y)"/>
+
+  <!-- step 5 -->
+  <rect x="478" y="390" width="170" height="64" rx="8" fill="#fff" stroke="#b98a3e"/>
+  <text x="563" y="414" text-anchor="middle" fill="#b98a3e" font-weight="600">⑤ 逐字比對、淨化</text>
+  <text x="563" y="433" text-anchor="middle" fill="#777" font-size="12">差一個字就放棄</text>
+  <path d="M478 422H452V504H426" fill="none" stroke="#b98a3e" stroke-width="1.8" marker-end="url(#y)"/>
+
+  <!-- step 6 -->
+  <rect x="256" y="472" width="170" height="64" rx="8" fill="#f1f0e6" stroke="#3f6b4f"/>
+  <text x="341" y="496" text-anchor="middle" fill="#3f6b4f" font-weight="600">⑥ 校正版 commit 進來</text>
+  <text x="341" y="515" text-anchor="middle" fill="#777" font-size="12">標 [style-autofix]</text>
+  <path d="M341 536V582" stroke="#3f6b4f" stroke-width="1.8" marker-end="url(#g)"/>
+
+  <!-- step 7 -->
+  <rect x="256" y="582" width="170" height="52" rx="8" fill="#3f6b4f"/>
+  <text x="341" y="605" text-anchor="middle" fill="#f1f0e6" font-weight="600">⑦ 再建置一次、上線</text>
+  <text x="341" y="623" text-anchor="middle" fill="#f1f0e6" font-size="12">Layer 1 照樣清理</text>
+
+  <text x="470" y="604" fill="#777" font-size="12">自己 commit 不會再觸發自己:</text>
+  <text x="470" y="622" fill="#777" font-size="12">看到 [style-autofix] 就直接跳過</text>
+</svg>

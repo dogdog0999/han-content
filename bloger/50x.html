@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>暫時無法顯示 · HAN</title>
+  <style>
+    * { box-sizing:border-box; }
+    html,body { margin:0; height:100%; }
+    body { background:#f1f0e6; color:#2b2f28; display:grid; place-items:center;
+      font-family:"Noto Serif TC","Songti TC",Georgia,"Times New Roman",serif; padding:24px; }
+    .wrap { max-width:560px; text-align:center; }
+    .brand { display:inline-flex; align-items:center; gap:10px; margin-bottom:40px; }
+    .brand__mark { width:34px; height:34px; border-radius:9px; background:#15170f; color:#f1f0e6;
+      display:grid; place-items:center; font-weight:700; font-size:13px; letter-spacing:.5px; font-family:Arial,sans-serif; }
+    .brand__name { font-size:1.3rem; letter-spacing:1px; }
+    .code { font-size:.8rem; letter-spacing:.25em; color:#6a6f63; text-transform:uppercase; margin-bottom:14px; }
+    h1 { font-weight:700; font-size:clamp(1.6rem,6vw,2.3rem); margin:0 0 16px; }
+    p { color:#6a6f63; line-height:1.9; font-size:1.02rem; margin:0 auto 34px; max-width:40ch; }
+    .actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    a.btn, button.btn { font:inherit; cursor:pointer; padding:11px 22px; border-radius:999px; border:1px solid transparent;
+      background:#3f6b4f; color:#f1f0e6; text-decoration:none; font-size:1rem; transition:background .2s,border-color .2s,color .2s; }
+    a.btn:hover, button.btn:hover { background:#345a41; }
+    .btn--ghost { background:transparent; color:#3f6b4f; border-color:#c9c8ba; }
+    .btn--ghost:hover { background:#3f6b4f; border-color:#3f6b4f; color:#f1f0e6; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <span class="brand"><span class="brand__mark">HAN</span><span class="brand__name">HAN</span></span>
+    <div class="code">暫時出了點狀況</div>
+    <h1>這裡現在連不上</h1>
+    <p>伺服器暫時沒回應,可能正在重啟或維護。稍等一下再重新整理,通常很快就好。</p>
+    <div class="actions">
+      <button class="btn" onclick="location.reload()">重新整理</button>
+      <a class="btn btn--ghost" href="/bloger/">回首頁</a>
+    </div>
+  </main>
+</body>
+</html>

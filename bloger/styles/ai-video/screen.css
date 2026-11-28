@@ -1,0 +1,12 @@
+/* ===== AI 影片 ②【屏幕 screen】 =====
+   把固定 1280×720 舞台等比塞進播放器——view 是可視窗、stage 是固定畫布、scene 是當前這一幕的容器。
+   三工具箱之一(另有 ①chrome、③stage)。整台由 JS(screen.js 的 fitStage)等比縮放,永不跑版。
+   namespace:.c-aiv__view / __stage / __scene。
+   (scene 的入場動畫分兩塊:這裡放基礎淡入 is-in;進場變化 enter-* 由 ③stage 疊加、載入順序在本檔之後。) */
+.c-aiv__view { position: absolute; inset: 0; overflow: hidden; background: var(--paper); }
+.c-aiv__stage { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
+.c-aiv__scene { position: absolute; inset: 0; }
+.c-aiv__scene.is-in { animation: aivfade .5s var(--ease); }
+@keyframes aivfade { from { opacity: 0; } to { opacity: 1; } }
+/* 舞台裡的 SVG 等比填滿畫布(圖本來就是等比縮放的 object)*/
+.c-aiv__stage svg { width: 100%; height: 100%; display: block; }

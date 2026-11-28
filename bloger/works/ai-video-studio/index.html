@@ -1,0 +1,160 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>影片工作室 — 一句話，生一支會講解的小影片</title><meta name="description" content="丟一句主題，大約一分鐘，就生出一支會旁白、還自己畫圖的小影片。HAN 的一個小工具。"><link rel="icon" type="image/svg+xml" href="/bloger/assets/logo.svg"></head><body><style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap');
+
+  :root {
+    --paper: #f1f0e6;
+    --card: #faf9f3;
+    --ink: #232a20;
+    --ink-soft: #5b6354;
+    --green: #3f6b4f;
+    --green-d: #2d5139;
+    --gold: #b98a3e;
+    --line: rgba(35, 42, 30, .12);
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans TC', system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 56px 0; }
+  h1, h2 { font-family: 'Noto Serif TC', serif; font-weight: 700; line-height: 1.25; color: var(--ink); }
+
+  /* hero */
+  .hero { text-align: center; padding: 72px 0 48px; }
+  .eyebrow {
+    display: inline-block; font-size: .8rem; letter-spacing: .14em; font-weight: 500;
+    color: var(--green); background: rgba(63, 107, 79, .1);
+    padding: 5px 13px; border-radius: 999px; margin-bottom: 20px;
+  }
+  .hero h1 { font-size: clamp(1.9rem, 6vw, 3rem); margin: 0 0 16px; letter-spacing: -.5px; }
+  .hero .lede { font-size: clamp(1.02rem, 2.5vw, 1.2rem); color: var(--ink-soft); max-width: 30ch; margin: 0 auto 30px; }
+  .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; font-family: inherit; font-size: 1rem; font-weight: 500;
+    padding: 12px 24px; border-radius: 999px; text-decoration: none; cursor: pointer; transition: transform .12s, background .12s, box-shadow .12s;
+  }
+  .btn-primary { background: var(--green); color: #fdfdf8; box-shadow: 0 2px 10px rgba(63, 107, 79, .28); }
+  .btn-primary:hover { background: var(--green-d); transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--green); border: 1px solid var(--line); }
+  .btn-ghost:hover { border-color: var(--green); }
+
+  /* generic section heading */
+  .shead { text-align: center; margin: 0 0 8px; font-size: clamp(1.3rem, 4vw, 1.7rem); }
+  .ssub { text-align: center; color: var(--ink-soft); margin: 0 auto 32px; max-width: 42ch; font-size: .96rem; }
+
+  /* live player */
+  .player { max-width: 660px; margin: 0 auto; }
+  .player iframe { width: 100%; aspect-ratio: 64 / 42; border: 0; border-radius: var(--radius); box-shadow: 0 10px 34px rgba(0, 0, 0, .18); background: #000; display: block; }
+  .cap { text-align: center; color: var(--ink-soft); font-size: .86rem; margin-top: 14px; }
+
+  /* feature cards */
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 20px; }
+  .card .n { width: 34px; height: 34px; border-radius: 9px; background: rgba(63, 107, 79, .12); color: var(--green); display: grid; place-items: center; font-weight: 700; font-family: 'Noto Serif TC', serif; margin-bottom: 12px; }
+  .card h3 { margin: 0 0 6px; font-size: 1.04rem; font-family: 'Noto Serif TC', serif; }
+  .card p { margin: 0; color: var(--ink-soft); font-size: .92rem; line-height: 1.65; }
+
+  /* figure */
+  figure { margin: 0; }
+  .shot { display: block; width: 100%; height: auto; border-radius: var(--radius); border: 1px solid var(--line); }
+  .shot.dark { background: #1b1d1a; border-color: rgba(0, 0, 0, .25); }
+  figure.narrow { max-width: 620px; margin: 0 auto; }
+
+  .alt { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .note { max-width: 46ch; margin: 22px auto 0; text-align: center; color: var(--ink-soft); font-size: .92rem; }
+  .note b { color: var(--ink); font-weight: 500; }
+
+  /* closing */
+  .closing { text-align: center; }
+  .closing h2 { font-size: clamp(1.3rem, 4vw, 1.7rem); margin: 0 0 22px; }
+  .foot { text-align: center; padding: 34px 0 54px; color: var(--ink-soft); font-size: .88rem; }
+  .foot a { color: var(--green); text-decoration: none; }
+  .foot a:hover { text-decoration: underline; }
+
+  @media (max-width: 680px) {
+    .cards { grid-template-columns: 1fr; }
+    section { padding: 44px 0; }
+  }
+</style>
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">HAN · 小工具</span>
+    <h1 id="影片工作室">影片工作室</h1>
+    <p class="lede">丟一句主題，大約一分鐘，就生出一支會旁白、還自己畫圖的小影片。不用先寫文章。</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://han-ai-video.dogr2487.workers.dev/studio">開啟工作室 →</a>
+      <a class="btn btn-ghost" href="#how">它怎麼運作 ↓</a>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="wrap">
+    <h2 class="shead" id="先看一支現成的">先看一支現成的</h2>
+    <p class="ssub">這支是我丟「DNS：在網址列按下 Enter 後發生什麼」生出來的，整支都它自己寫稿、配音、畫圖。</p>
+    <div class="player">
+      <iframe src="https://han-ai-video.dogr2487.workers.dev/play/s-a02bf2762d" allow="autoplay; fullscreen" title="DNS：按下 Enter 後發生什麼（AI 生成的旁白投影片影片）"></iframe>
+      <p class="cap">按中間的播放鍵，它會一張一張講下去。</p>
+    </div>
+  </div>
+</section>
+<section id="how" class="alt">
+  <div class="wrap">
+    <h2 class="shead" id="它在做什麼">它在做什麼</h2>
+    <p class="ssub">說穿了就是把一句話，變成一支會講解的投影片影片。</p>
+    <div class="cards">
+      <div class="card">
+        <div class="n">1</div>
+        <h3 id="一句話--一份腳本">一句話 → 一份腳本</h3>
+        <p>你丟一句主題，模型寫出一張張投影片：有的是字卡、有的是幾個重點，有的是它自己畫的架構圖。</p>
+      </div>
+      <div class="card">
+        <div class="n">2</div>
+        <h3 id="會自己說故事">會自己說故事</h3>
+        <p>開場先丟一句勾子，中間圖跟旁白一起走，不是把資料攤平唸一遍。</p>
+      </div>
+      <div class="card">
+        <div class="n">3</div>
+        <h3 id="生完就能用">生完就能用</h3>
+        <p>給你一個播放連結和一段 iframe，想貼哪貼哪；工作室只留最新 5 支，也能隨手刪。</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="wrap">
+    <h2 class="shead" id="旁白跟著圖走">旁白跟著圖走</h2>
+    <p class="ssub">講到機制，它會自己畫一張圖，而且旁白是指著圖講的，不是各說各的。</p>
+    <figure class="narrow">
+      <img class="shot dark" src="/bloger/assets/ai-video-studio/diagram.png" alt="DNS 查詢的分層圖：瀏覽器快取 → 作業系統 → 本地 DNS → 往外問，箭頭標著「沒有」就往下一層，本地 DNS 用深綠色標成主角">
+      <p class="cap">旁白說「先看最左邊…再沒有，才交給中間這台深綠色的本地 DNS」，畫面就指著那幾個框。</p>
+    </figure>
+  </div>
+</section>
+<section class="alt">
+  <div class="wrap">
+    <h2 class="shead" id="怎麼生一支">怎麼生一支</h2>
+    <p class="ssub">填一句主題，按產生，剩下的交給它。</p>
+    <figure class="narrow">
+      <img class="shot" src="/bloger/assets/ai-video-studio/demo.gif" alt="在影片工作室填一句主題、按產生，約一分鐘長出一支會旁白的投影片影片">
+    </figure>
+    <p class="note">它<b>不是真的合成一支 mp4</b>——畫面是投影片、聲音是音檔，前端的播放器把兩邊兜起來播。好處是生得快、檔案小，照樣能嵌、能分享。對隨手要的素材來說，夠用了。</p>
+  </div>
+</section>
+<section class="closing">
+  <div class="wrap">
+    <h2 id="想到一個題目就來生一支">想到一個題目，就來生一支</h2>
+    <a class="btn btn-primary" href="https://han-ai-video.dogr2487.workers.dev/studio">開啟工作室 →</a>
+  </div>
+</section>
+<div class="foot">
+  <a href="/bloger/">← 回 HAN 部落格</a>
+</div></body></html>

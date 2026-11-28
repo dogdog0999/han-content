@@ -1,0 +1,141 @@
+/* ===== AI 影片 ①【播放器 chrome】 =====
+   控制列 / 音訊 / 字幕 / 大播放鍵 / 進度條 / 設定選單 / 目錄 / 載入轉圈 —— 播放器外殼。
+   三工具箱之一(另有 ②screen、③stage);各管各的 namespace,不寫跨箱後代選擇器。
+   主題變數(--accent / --paper / --ink …)由頁面 :root 提供(部落格來自 tokens.css,Worker 頁面自補)。
+   namespace:.c-aiv / __video / __ctrls / __row / __cbtn / __big / __scrub / __seg* / __time / __tip
+     / __vol* / __menu / __mrow / __mopts / __wrapmenu / __sizebtn / __toc* / __cc / __spin / __pending / __sp / __wrap* */
+.c-aiv-wrap { margin: 1.6em 0 2em; }
+.c-aiv-wrap__label { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600;
+  letter-spacing: .04em; color: var(--accent-d); margin-bottom: 8px; }
+.c-aiv-wrap__dot { color: var(--gold, var(--accent)); }
+.c-aiv { position: relative; border-radius: var(--radius); overflow: hidden; background: #0f1110; box-shadow: var(--shadow-sm); }
+.c-aiv.is-sm { max-width: 460px; margin-inline: auto; }
+.c-aiv.is-md { max-width: 680px; margin-inline: auto; }
+.c-aiv.is-lg { max-width: 100%; }
+/* align-content 一定要寫,不然這個 16:9 固定高度的盒子裡只有 icon + 文字兩個 grid item,
+   沒指定的話預設值 normal 會把兩個隱式 row 撐開去填滿整個高度(量過:各佔一半),
+   icon 跟文字就被拉開一大截;center 讓這兩行維持自己的內容高度、整組再一起置中。 */
+.c-aiv__pending { aspect-ratio: 16 / 9; display: grid; place-items: center; align-content: center; gap: 8px; color: var(--ink-soft);
+  font-size: .92rem; background: color-mix(in srgb, var(--accent) 5%, var(--paper)); text-align: center; padding: 16px; }
+.c-aiv__spark { font-size: 1.3rem; color: var(--accent); }
+
+.c-aiv__video { position: relative; aspect-ratio: 16 / 9; background: #0f1110; overflow: hidden; outline: none; }
+/* 全螢幕(比照 YouTube):影片區填滿螢幕;投影片用 object-fit: contain,非 16:9 螢幕自動留黑邊 */
+.c-aiv__video:fullscreen { width: 100vw; height: 100vh; aspect-ratio: auto; background: #000; }
+.c-aiv__video:-webkit-full-screen { width: 100vw; height: 100vh; aspect-ratio: auto; background: #000; }
+.c-aiv__video:fullscreen .c-aiv__ctrls { padding: 0 18px 10px; }
+.c-aiv.is-idle { cursor: none; }
+
+/* 字幕(YT 風:置中、半透明黑底,控制列隱藏時下移)*/
+.c-aiv__cc { position: absolute; left: 0; right: 0; bottom: 64px; width: fit-content; max-width: 92%; margin: 0 auto;
+  padding: 4px 12px; font-size: clamp(.82rem, 2.2vw, 1rem); line-height: 1.5; color: #fff; text-align: center;
+  background: rgba(0,0,0,.72); border-radius: 4px; pointer-events: none; z-index: 3; transition: bottom .2s var(--ease); }
+.c-aiv__cc:empty, .c-aiv.cc-off .c-aiv__cc { display: none; }
+.c-aiv.is-idle .c-aiv__cc { bottom: 16px; }
+/* 字幕字級(設定選單可調)*/
+.c-aiv.cc-sm .c-aiv__cc { font-size: clamp(.72rem, 1.8vw, .85rem); }
+.c-aiv.cc-lg .c-aiv__cc { font-size: clamp(1rem, 2.9vw, 1.35rem); }
+
+/* 中間大播放鍵 */
+.c-aiv__big { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3;
+  width: 62px; height: 62px; border: none; border-radius: 50%; background: rgba(0,0,0,.55); color: #fff;
+  display: grid; place-items: center; cursor: pointer; transition: opacity .2s, transform .2s; }
+.c-aiv__big svg { margin-left: 2px; }
+.c-aiv.is-playing .c-aiv__big { opacity: 0; transform: translate(-50%, -50%) scale(.8); pointer-events: none; }
+.c-aiv.is-quote .c-aiv__big { display: none; }  /* 字卡頁:不讓大播放鍵壓到大字 */
+.c-aiv.is-loading .c-aiv__big { opacity: 0; pointer-events: none; }  /* 載入中改顯示轉圈 */
+.c-aiv.is-ended .c-aiv__big { display: grid; opacity: 1; transform: translate(-50%, -50%); pointer-events: auto; }  /* 播完一定顯示重播鍵 */
+.c-aiv.is-start .c-aiv__big { display: grid; opacity: 1; transform: translate(-50%, -50%); pointer-events: auto; }  /* 封面(第一張,含字卡)一定顯示播放鍵,看得出是播放器 */
+
+/* 載入中轉圈 */
+.c-aiv__spin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3;
+  width: 46px; height: 46px; border-radius: 50%; border: 3px solid rgba(255,255,255,.25); border-top-color: #fff;
+  animation: aivspin .8s linear infinite; pointer-events: none; }
+.c-aiv__spin[hidden] { display: none; }
+@keyframes aivspin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+/* 旁白載入失敗提示(容錯)*/
+.c-aiv.has-err .c-aiv__cc { background: rgba(130,52,52,.85); }
+.c-aiv.cc-off.has-err .c-aiv__cc:not(:empty) { display: block; }  /* 字幕關著也要看得到錯誤提示 */
+/* 下載失敗 */
+.c-aiv__cbtn.is-err { color: #e08a7e; }
+/* 進度條 hover 小提示 */
+.c-aiv__tip { position: absolute; bottom: 46px; left: 0; transform: translateX(-50%); z-index: 6; max-width: 220px;
+  padding: 4px 9px; border-radius: 6px; background: rgba(15,17,16,.92); color: #fff; font-size: .74rem; line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.c-aiv__tip[hidden] { display: none; }
+
+/* 控制列(疊底、gradient、自動隱藏)*/
+.c-aiv__ctrls { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; padding: 0 8px 4px;
+  background: linear-gradient(transparent, rgba(0,0,0,.75)); transition: opacity .25s var(--ease), transform .25s var(--ease); }
+.c-aiv.is-idle .c-aiv__ctrls { opacity: 0; transform: translateY(10px); pointer-events: none; }
+
+/* 進度條:分章節的段(仿 YT chapters)*/
+.c-aiv__scrub { display: flex; gap: 3px; align-items: center; height: 15px; padding: 6px 2px; cursor: pointer; }
+.c-aiv__seg { position: relative; flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,.3); transition: height .12s; overflow: hidden; }
+.c-aiv__scrub:hover .c-aiv__seg { height: 6px; }
+.c-aiv__seg.is-on { background: rgba(255,255,255,.45); }
+.c-aiv__seg-fill { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 2px; }
+
+/* 按鈕排 */
+.c-aiv__row { display: flex; align-items: center; gap: 2px; padding: 0 2px 4px; }
+.c-aiv__cbtn { flex: 0 0 auto; display: grid; place-items: center; width: 36px; height: 36px; border: none;
+  background: transparent; color: #fff; cursor: pointer; border-radius: 8px; opacity: .92; transition: background .15s, opacity .15s, color .15s; }
+.c-aiv__cbtn:hover { opacity: 1; background: rgba(255,255,255,.15); }
+.c-aiv__cbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.c-aiv__cbtn.is-on { color: #5aa06f; }  /* 開啟狀態:亮一點的綠 + 下面白邊,深色列上才清楚 */
+.c-aiv__cbtn.is-on svg { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px rgba(255,255,255,.9)); }
+.c-aiv__cbtn.is-off { opacity: .55; }
+.c-aiv__cbtn.is-busy { opacity: .5; pointer-events: none; }  /* 下載打包中 */
+.c-aiv__sizebtn { font-size: .82rem; font-weight: 700; color: #fff; }
+.c-aiv__time { color: #fff; font-size: .78rem; margin: 0 8px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.c-aiv__sp { flex: 1; }
+/* 音量:喇叭鈕 + 滑桿,滑桿平時收起,hover/focus 才展開(仿 YT)*/
+.c-aiv__vol { display: flex; align-items: center; }
+.c-aiv__volbar { width: 0; opacity: 0; height: 4px; margin: 0; padding: 0; cursor: pointer;
+  /* 仿 YT:左邊(已填到目前音量 --vol)白色、右邊半透明白,搭配白色圓把手 */
+  background: linear-gradient(to right, #fff 0 var(--vol, 100%), rgba(255,255,255,.35) var(--vol, 100%) 100%);
+  border-radius: 2px; appearance: none; -webkit-appearance: none;
+  transition: width .18s var(--ease), opacity .18s var(--ease); }
+.c-aiv__vol:hover .c-aiv__volbar, .c-aiv__vol:focus-within .c-aiv__volbar { width: 64px; opacity: 1; margin: 0 6px 0 2px; }
+.c-aiv__volbar::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 11px; height: 11px; border-radius: 50%; background: #fff; border: none; }
+.c-aiv__volbar::-moz-range-thumb { width: 11px; height: 11px; border-radius: 50%; background: #fff; border: none; }
+/* 觸控沒有 hover:靠 hover/focus 展開的音量滑桿,在手機上會「點一下 🔊 就卡開」成一條空滑桿、
+   還擠掉右邊的鈕。觸控就維持收合,只用喇叭鈕 toggle 靜音(音量用裝置本身調)。 */
+@media (hover: none) {
+  .c-aiv__vol:hover .c-aiv__volbar, .c-aiv__vol:focus-within .c-aiv__volbar { width: 0; opacity: 0; margin: 0; }
+}
+
+/* 設定選單(速度 / 字幕)*/
+.c-aiv__wrapmenu { position: relative; display: flex; }
+.c-aiv__menu { position: absolute; right: 0; bottom: 44px; min-width: 210px; background: rgba(15,17,16,.72);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: #fff; border: 1px solid rgba(255,255,255,.14);
+  border-radius: 12px; padding: 6px; box-shadow: 0 10px 28px rgba(0,0,0,.4); }
+.c-aiv__menu[hidden] { display: none; }
+.c-aiv__mrow { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 7px 8px; font-size: .82rem; }
+.c-aiv__mrow > span:first-child { white-space: nowrap; color: rgba(255,255,255,.8); }
+.c-aiv__mopts { display: flex; gap: 4px; }
+.c-aiv__mopts button { border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.04); color: #fff; font: inherit;
+  font-size: .72rem; padding: 3px 9px; border-radius: 999px; cursor: pointer; transition: background .12s, border-color .12s; }
+.c-aiv__mopts button:hover { background: rgba(255,255,255,.14); }
+.c-aiv__mopts button.is-on { background: var(--accent); border-color: var(--accent); }
+
+/* 左側目錄(半透明,疊在影片上,可收合)*/
+.c-aiv__toc { position: absolute; top: 0; left: 0; bottom: 0; z-index: 5; width: min(260px, 74%);
+  padding: 14px 10px; overflow: auto; display: flex; flex-direction: column; gap: 2px;
+  background: rgba(15,17,16,.84); backdrop-filter: blur(8px); border-right: 1px solid rgba(255,255,255,.12);
+  opacity: 0; visibility: hidden; transform: translateX(-8px); transition: opacity .28s var(--ease), transform .28s var(--ease), visibility .28s; }
+.c-aiv__toc.is-open { opacity: 1; visibility: visible; transform: none; }
+.c-aiv__toc-item { text-align: left; border: none; background: transparent; padding: 8px 10px; border-radius: 8px;
+  font: inherit; font-size: .82rem; line-height: 1.4; color: rgba(255,255,255,.85); cursor: pointer; transition: background .15s; }
+.c-aiv__toc-item:hover { background: rgba(255,255,255,.12); color: #fff; }
+.c-aiv__toc-item.is-on { background: var(--accent); color: #fff; }
+
+/* 窄螢幕(手機直向):整排控制鈕擠不下、右邊的全螢幕/下載會被切掉。縮小間距與鈕尺寸,
+   並把下載(ZIP,手機少用)收起,確保核心控制(含全螢幕)都在視窗內。 */
+@media (max-width: 480px) {
+  .c-aiv__row { gap: 0; }
+  .c-aiv__cbtn { width: 34px; height: 34px; }
+  .c-aiv__time { margin: 0 4px; font-size: .72rem; }
+  /* 小螢幕:字幕、章節、下載從控制列收起,改到設定(齒輪)選單裡,只留核心控制 */
+  .c-aiv__row [data-cc], .c-aiv__row [data-tocbtn], .c-aiv__row [data-download] { display: none; }
+}
